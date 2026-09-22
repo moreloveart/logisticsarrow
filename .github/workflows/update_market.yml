@@ -1,0 +1,45 @@
+name: Auto Update Market Report
+
+on:
+  schedule:
+    # Tự động chạy lúc 00:00 UTC (07:00 sáng giờ Việt Nam) từ Thứ 2 đến Thứ 6
+    - cron: '0 0 * * 1-5'
+  workflow_dispatch: # Cho phép bấm chạy thủ công để test bất cứ lúc nào
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade google-genai
+
+      - name: Run script update
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python update_report.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "Không có thay đổi mới."
+          else
+            git commit -m "chore: auto update market report [skip ci]"
+            git push
+          fi
