@@ -1508,16 +1508,12 @@
 
         const titleEl = document.getElementById('upload-status-title');
         const subEl = document.getElementById('upload-status-sub');
-        const badgeEl = document.getElementById('upload-status-badge');
 
         if (titleEl) {
-          titleEl.innerHTML = `Đã tải lên tệp: <span class="text-emerald-600 font-mono font-bold">${fileName}</span>`;
+          titleEl.innerHTML = `Đã tải lên: <span class="text-emerald-600 font-mono font-bold">${fileName}</span>`;
         }
         if (subEl) {
           subEl.innerHTML = `Dung lượng: <b>${fileSizeKb} KB</b> | Định dạng: <b>${fileName.split('.').pop().toUpperCase()}</b>`;
-        }
-        if (badgeEl) {
-          badgeEl.innerHTML = `<span>✅</span> <span class="text-emerald-700 font-semibold">Tệp đã được xác thực an toàn và tích hợp vào Hub dữ liệu nội bộ</span>`;
         }
 
         setTimeout(() => {
