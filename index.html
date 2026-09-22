@@ -32,7 +32,68 @@
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden text-sm">
+<!-- ==================== LOGIN SCREEN OVERLAY ==================== -->
+  <div id="login-overlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border border-slate-100">
+      
+      <!-- Brand Logo -->
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-2xl mx-auto shadow-lg mb-3">
+          ➹
+        </div>
+        <h2 class="text-xl font-bold text-slate-900 tracking-tight">LOGISTICS ARROW</h2>
+        <p class="text-xs text-slate-500 mt-1">Cổng Đăng Nhập Hệ Thống Hỗ Trợ Quyết Định Dệt May</p>
+      </div>
 
+      <!-- Login Form View -->
+      <div id="login-form-box" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tài khoản / Email:</label>
+          <input type="text" id="login-username" value="viethung@garment.vn" placeholder="Nhập tài khoản hoặc email..." class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-bold text-slate-700">Mật khẩu:</label>
+            <button onclick="app.showForgotPasswordView()" type="button" class="text-[11px] text-blue-600 hover:underline">Quên mật khẩu?</button>
+          </div>
+          <input type="password" id="login-password" value="123456" placeholder="Nhập mật khẩu..." class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+        </div>
+
+        <div id="login-error-msg" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 p-2.5 rounded-lg text-center font-medium"></div>
+
+        <button onclick="app.handleLogin()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-md transition transform active:scale-95 flex items-center justify-center space-x-1.5">
+          <span>Đăng nhập hệ thống</span>
+          <span>➜</span>
+        </button>
+
+        <div class="text-[11px] text-slate-400 text-center pt-2 border-t border-slate-100">
+          Tài khoản demo: <b class="text-slate-600 font-mono">viethung@garment.vn</b> | Mật khẩu: <b class="text-slate-600 font-mono">123456</b>
+        </div>
+      </div>
+
+      <!-- Forgot Password View (Ẩn mặc định) -->
+      <div id="forgot-password-box" class="hidden space-y-4">
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Nhập địa chỉ email đăng ký hệ thống để nhận hướng dẫn khôi phục mật khẩu truy cập nội bộ:
+        </p>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Email khôi phục:</label>
+          <input type="email" id="forgot-email" placeholder="viethung@garment.vn" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <button onclick="app.handleForgotPassword()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold shadow transition">
+          Gửi yêu cầu khôi phục
+        </button>
+
+        <button onclick="app.showLoginView()" class="w-full text-center text-xs text-slate-500 hover:text-slate-800 font-medium">
+          ← Quay lại màn hình đăng nhập
+        </button>
+      </div>
+
+    </div>
+  </div>
   <!-- ==================== SIDEBAR ==================== -->
   <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between flex-shrink-0 z-30 shadow-xl">
     <div>
@@ -150,6 +211,10 @@
             <div class="font-semibold text-xs text-slate-800">DN Dệt May Việt Hưng</div>
             <div class="text-[10px] text-slate-400">Trưởng phòng Logistics</div>
           </div>
+          <!-- THÊM NÚT NÀY VÀO ĐÂY -->
+          <button onclick="app.handleLogout()" title="Đăng xuất khỏi hệ thống" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-slate-100 text-xs transition">
+            🚪
+          </button>
         </div>
       </div>
     </header>
@@ -363,8 +428,66 @@
         exchangeRateChangePct: 0.6
       },
       decisionWeights: { ...DB.settings.weights },
+      checkAuth() {
+        const isAuth = sessionStorage.getItem('is_authenticated');
+        const overlay = document.getElementById('login-overlay');
+        if (isAuth === 'true') {
+          if (overlay) overlay.classList.add('hidden');
+        } else {
+          if (overlay) overlay.classList.remove('hidden');
+        }
+      },
+
+      handleLogin() {
+        const user = document.getElementById('login-username').value.trim();
+        const pass = document.getElementById('login-password').value.trim();
+        const errorMsg = document.getElementById('login-error-msg');
+
+        if (user === 'viethung@garment.vn' && pass === '123456') {
+          sessionStorage.setItem('is_authenticated', 'true');
+          document.getElementById('login-overlay').classList.add('hidden');
+          errorMsg.classList.add('hidden');
+          this.showToast('Đăng nhập thành công! Chào mừng Trưởng phòng Logistics.', '👋');
+        } else {
+          errorMsg.textContent = 'Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!';
+          errorMsg.classList.remove('hidden');
+        }
+      },
+
+      showForgotPasswordView() {
+        document.getElementById('login-form-box').classList.add('hidden');
+        document.getElementById('forgot-password-box').classList.remove('hidden');
+      },
+
+      showLoginView() {
+        document.getElementById('forgot-password-box').classList.add('hidden');
+        document.getElementById('login-form-box').classList.remove('hidden');
+      },
+
+      handleForgotPassword() {
+        const email = document.getElementById('forgot-email').value.trim();
+        if (!email) {
+          this.showToast('Vui lòng nhập địa chỉ email', '⚠️');
+          return;
+        }
+        this.showToast('Mã khôi phục đã được gửi tới ' + email + ' (Mật khẩu mặc định: 123456)', '✉️');
+        this.showLoginView();
+      },
+
+      handleLogout() {
+        sessionStorage.removeItem('is_authenticated');
+        document.getElementById('login-overlay').classList.remove('hidden');
+        this.showToast('Đã đăng xuất khỏi phiên làm việc', '🔒');
+      },
 
       init() {
+        this.checkAuth();
+        this.renderNotifications();
+        this.navigate('dashboard');
+
+      init() {
+        init() {
+        this.checkAuth();
         this.renderNotifications();
         this.navigate('dashboard');
         // Close dropdown when click outside
