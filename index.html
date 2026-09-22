@@ -471,7 +471,32 @@
           }
         }
       },
+      showForgotPasswordView() {
+        document.getElementById('login-form-box').classList.add('hidden');
+        document.getElementById('forgot-password-box').classList.remove('hidden');
+      }, // <-- BẮT BUỘC CÓ DẤU PHẨY
 
+      showLoginView() {
+        document.getElementById('forgot-password-box').classList.add('hidden');
+        document.getElementById('login-form-box').classList.remove('hidden');
+      }, // <-- BẮT BUỘC CÓ DẤU PHẨY
+
+      handleForgotPassword() {
+        const email = document.getElementById('forgot-email').value.trim();
+        if (!email) {
+          this.showToast('Vui lòng nhập địa chỉ email', '⚠️');
+          return;
+        }
+        this.showToast('Mã khôi phục đã được gửi tới ' + email + ' (Mật khẩu mặc định: 123456)', '✉️');
+        this.showLoginView();
+      }, // <-- BẮT BUỘC CÓ DẤU PHẨY
+
+      handleLogout() {
+        sessionStorage.removeItem('is_authenticated');
+        const overlay = document.getElementById('login-overlay');
+        if (overlay) overlay.style.display = 'flex';
+        this.showToast('Đã đăng xuất khỏi phiên làm việc', '🔒');
+      }, // <-- BẮT BUỘC CÓ DẤU PHẨY
       init() {
         this.checkAuth();
         this.renderNotifications();
