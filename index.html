@@ -347,29 +347,7 @@
         return Number(score.toFixed(1));
       }
     };
-<!-- Arrow Insight Card (Dynamic Synthesis) -->
-      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 ...">
-        ...
-      </div>
 
-      <!-- CHÈN VÀO ĐÂY: KHUNG ĐIỂM TIN THỊ TRƯỜNG TỰ ĐỘNG BỞI GEMINI -->
-      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-          <div class="flex items-center space-x-2">
-            <span class="text-base">🌐</span>
-            <h2 class="font-bold text-slate-900 text-sm">Điểm Tin Thị Trường Tự Động (Gemini Grounding)</h2>
-          </div>
-          <span class="text-[10px] bg-blue-50 text-blue-700 font-mono px-2 py-0.5 rounded font-semibold border border-blue-200">Auto Actions Pipeline</span>
-        </div>
-        <div class="text-xs text-slate-600 leading-relaxed space-y-2">
-          <!-- MARKET_REPORT_START -->
-          <p>Đang chờ cập nhật bản tin thị trường mới nhất từ GitHub Actions...</p>
-          <!-- MARKET_REPORT_END -->
-        </div>
-      </div>
-
-      <!-- KPI Cards Grid -->
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
     // --- APPLICATION CONTROLLER & UI ROUTER ---
     const app = {
       currentPage: 'dashboard',
@@ -666,6 +644,22 @@
                 <div class="hidden lg:block text-5xl opacity-30 select-none">
                   🧭
                 </div>
+              </div>
+            </div>
+
+            <!-- Auto-updating Gemini Market Feed Card -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">🌐</span>
+                  <h2 class="font-bold text-slate-900 text-sm">Điểm Tin Thị Trường Tự Động (Gemini Grounding)</h2>
+                </div>
+                <span class="text-[10px] bg-blue-50 text-blue-700 font-mono px-2 py-0.5 rounded font-semibold border border-blue-200">Tự động hóa qua GitHub Actions</span>
+              </div>
+              <div class="text-xs text-slate-600 leading-relaxed space-y-2">
+                <!-- MARKET_REPORT_START -->
+                <p class="text-slate-400 italic">Đang chờ lượt cập nhật dữ liệu tự động đầu tiên từ GitHub Actions...</p>
+                <!-- MARKET_REPORT_END -->
               </div>
             </div>
 
@@ -1302,7 +1296,7 @@
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">1. Chọn lô hàng chịu tác động:</label>
                 <select onchange="app.selectedShipmentForImpact = this.value; app.navigate('impact')" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 bg-slate-50 font-medium focus:bg-white">
                   ${DB.shipments.map(s => `
-                    <option value="${s.id}" ${s.id === shipment.id ? 'selected' : ''}>${s.id} - ${s.material} (${s.quantity} tấn, ${s.route})</option>
+                    <option value="${s.id}" ${s.id === shipment.id ? 'selected' : ''}>${s.id} -${s.material} (${s.quantity} tấn, ${s.route})</option>
                   `).join('')}
                 </select>
               </div>
@@ -1438,7 +1432,7 @@
                       <span class="px-2.5 py-0.5 rounded text-[11px] font-bold ${r.level === 'Cao' ? 'bg-red-600 text-white' : 'bg-amber-500 text-white'}">
                         MỨC ĐỘ ${r.level.toUpperCase()}
                       </span>
-                      <h2 class="font-bold text-slate-900 text-sm">${r.route} - ${r.category}</h2>
+                      <h2 class="font-bold text-slate-900 text-sm">${r.route} -${r.category}</h2>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">${r.summary}</p>
                     <div class="flex flex-wrap items-center gap-4 text-xs pt-1">
@@ -1618,11 +1612,6 @@
       // 7. PAGE: SO SÁNH PHƯƠNG ÁN (DECISION LAB)
       // ==============================================================
       renderDecisionLab() {
-        // 3 Phương án ứng phó cho lô hàng 100 tấn
-        // Phương án A: Tuyến hiện tại (Ninh Ba -> HP), tiếp tục đợi (Rẻ nhất, trễ nặng)
-        // Phương án B: Tuyến thay thế (Đường bộ Quảng Châu - Hữu Nghị - HP) (Cước cao hơn, cực nhanh)
-        // Phương án C: Mua nhà cung cấp Ấn Độ Mundra (Cước vừa phải, thời gian trung bình)
-
         const optA = {
           id: 'A',
           name: 'Phương án A (Giữ tuyến hiện tại)',
@@ -1685,7 +1674,6 @@
           opt.totalScore = calculationService.calculateWeightedScore(opt.scores, this.decisionWeights);
         });
 
-        // Tìm phương án điểm cao nhất theo trọng số hiện hành
         const highestScoreOpt = [...options].sort((a, b) => b.totalScore - a.totalScore)[0];
 
         return `
@@ -2273,33 +2261,27 @@
       runFullDemoFlow() {
         this.showToast('Bắt đầu luồng trình diễn minh họa 8 bước...', '⚡');
 
-        // Bước 1: Về Dashboard
         this.navigate('dashboard');
 
-        // Bước 2: Hiển thị biến động sau 1.5s
         setTimeout(() => {
           this.showToast('Bước 1: Phát hiện cú sốc cước vận tải biển +20% trên tuyến Trung Quốc - HP', '🚨');
         }, 1200);
 
-        // Bước 3: Sang Phân tích tác động
         setTimeout(() => {
           this.showToast('Bước 2: Hệ thống tính toán chi phí tăng 40 triệu VNĐ đối với lô sợi SH001', '🔍');
           this.navigate('impact', { shipmentId: 'SH001', changePct: 20 });
         }, 2800);
 
-        // Bước 4: Sang Mô phỏng kịch bản trễ 7 ngày
         setTimeout(() => {
           this.showToast('Bước 3: Mô phỏng hành trình trễ 7 ngày → Phát hiện nguy cơ thiếu 4 tấn nguyên liệu', '🎯');
           this.navigate('scenario');
         }, 4800);
 
-        // Bước 5: Sang So sánh phương án
         setTimeout(() => {
           this.showToast('Bước 4: Mở phòng thí nghiệm quyết định so sánh 3 phương án ứng phó', '⚖️');
           this.navigate('decision');
         }, 6800);
 
-        // Bước 6: Mở Trợ lý phân tích
         setTimeout(() => {
           this.showToast('Bước 5: Trợ lý tổng hợp kết luận định lượng và phân tích đánh đổi', '🤖');
           this.navigate('assistant');
