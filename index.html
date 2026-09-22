@@ -502,7 +502,7 @@
         this.checkAuth();
         this.renderNotifications();
         this.navigate('dashboard');
-        // Close dropdown when click outside
+        // Đóng dropdown khi click ra ngoài
         document.addEventListener('click', (e) => {
           if (!e.target.closest('#notif-dropdown') && !e.target.closest('button[onclick="app.toggleNotifications()"]')) {
             document.getElementById('notif-dropdown').classList.add('hidden');
