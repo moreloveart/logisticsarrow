@@ -439,45 +439,37 @@
       },
 
       handleLogin() {
-        const user = document.getElementById('login-username').value.trim();
-        const pass = document.getElementById('login-password').value.trim();
+        console.log("Đang kích hoạt đăng nhập...");
+        const userEl = document.getElementById('login-username');
+        const passEl = document.getElementById('login-password');
         const errorMsg = document.getElementById('login-error-msg');
+        const overlay = document.getElementById('login-overlay');
+
+        if (!userEl || !passEl) {
+          console.error("Không tìm thấy phần tử input login!");
+          return;
+        }
+
+        const user = userEl.value.trim();
+        const pass = passEl.value.trim();
 
         if (user === 'viethung@garment.vn' && pass === '123456') {
           sessionStorage.setItem('is_authenticated', 'true');
-          document.getElementById('login-overlay').classList.add('hidden');
-          errorMsg.classList.add('hidden');
+          if (overlay) {
+            overlay.classList.add('hidden');
+          }
+          if (errorMsg) {
+            errorMsg.classList.add('hidden');
+          }
           this.showToast('Đăng nhập thành công! Chào mừng Trưởng phòng Logistics.', '👋');
         } else {
-          errorMsg.textContent = 'Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!';
-          errorMsg.classList.remove('hidden');
+          if (errorMsg) {
+            errorMsg.textContent = 'Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!';
+            errorMsg.classList.remove('hidden');
+          } else {
+            alert('Tài khoản hoặc mật khẩu không chính xác!');
+          }
         }
-      },
-
-      showForgotPasswordView() {
-        document.getElementById('login-form-box').classList.add('hidden');
-        document.getElementById('forgot-password-box').classList.remove('hidden');
-      },
-
-      showLoginView() {
-        document.getElementById('forgot-password-box').classList.add('hidden');
-        document.getElementById('login-form-box').classList.remove('hidden');
-      },
-
-      handleForgotPassword() {
-        const email = document.getElementById('forgot-email').value.trim();
-        if (!email) {
-          this.showToast('Vui lòng nhập địa chỉ email', '⚠️');
-          return;
-        }
-        this.showToast('Mã khôi phục đã được gửi tới ' + email + ' (Mật khẩu mặc định: 123456)', '✉️');
-        this.showLoginView();
-      },
-
-      handleLogout() {
-        sessionStorage.removeItem('is_authenticated');
-        document.getElementById('login-overlay').classList.remove('hidden');
-        this.showToast('Đã đăng xuất khỏi phiên làm việc', '🔒');
       },
 
       init() {
