@@ -494,16 +494,11 @@
       handleLogout() {
         sessionStorage.removeItem('is_authenticated');
         const overlay = document.getElementById('login-overlay');
-        if (overlay) overlay.style.display = 'flex';
+        if (overlay) overlay.classList.remove('hidden');
         this.showToast('Đã đăng xuất khỏi phiên làm việc', '🔒');
-      }, // <-- BẮT BUỘC CÓ DẤU PHẨY
-      init() {
-        this.checkAuth();
-        this.renderNotifications();
-        this.navigate('dashboard');
+      },
 
       init() {
-        init() {
         this.checkAuth();
         this.renderNotifications();
         this.navigate('dashboard');
@@ -2441,7 +2436,7 @@
         if (safety) DB.settings.safetyStockThresholdDays = Number(safety);
         this.showToast('Đã lưu thành công cấu hình hệ thống!', '✅');
       },
-saveUserApiKey() {
+      saveUserApiKey() {
         const input = document.getElementById('client-api-key');
         const key = input.value.trim();
         if (!key) {
