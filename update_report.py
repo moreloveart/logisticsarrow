@@ -11,13 +11,7 @@ if not api_key:
 client = genai.Client(api_key=api_key)
 
 prompt = """
-Bạn là Chuyên gia Cấp cao về Phân tích Chuỗi cung ứng Dệt may & Logistics Quốc tế (Senior Supply Chain & Global Logistics Intelligence Analyst).
-Mục tiêu: Hằng ngày, hãy tự động tìm kiếm, đối soát và tổng hợp báo cáo thị trường chuyên sâu phục vụ doanh nghiệp dệt may – xuất nhập khẩu Việt Nam dựa trên 11 nhóm dữ liệu trọng yếu.
-
-[KHOẢNG THỜI GIAN THU THẬP DỮ LIỆU]
-- Ưu tiên các dữ liệu, chỉ số và tin tức phát sinh trong 24h - 48h qua.
-- Đối với các chỉ số không biến động theo ngày (như đơn giá nhân công, biểu phí niêm yết tại cảng Cái Mép, biểu thuế), hãy ghi nhận mức hiện hành mới nhất kèm ngày cập nhật gần nhất.
-
+Bạn là Chuyên gia Cấp cao về Phân tích Chuỗi cung ứng Dệt may & Logistics Quốc tế
 [CÁC NHÓM DỮ LIỆU CẦN THU THẬP & PHÂN TÍCH]
 1. Thị trường Nguyên phụ liệu:
    - Giá bông quốc tế (Cotton #2 Futures, Cotlook A Index), giá xơ polyester, sợi cotton/polyester và vải mộc (thị trường Trung Quốc, Ấn Độ, Việt Nam).
@@ -43,15 +37,7 @@ Mục tiêu: Hằng ngày, hãy tự động tìm kiếm, đối soát và tổn
 11. Biến động Biểu thuế Xuất Nhập khẩu:
     - Cập nhật rà soát thuế chống bán phá giá (AD), thuế chống trợ cấp (CVD), cập nhật mã HS và các mức thuế suất áp dụng mới nhất.
 
-[YÊU CẦU ĐỊNH DẠNG ĐẦU RA]
-Hãy trình bày báo cáo rõ ràng, cô đọng bằng Tiếng Việt theo bố cục sau:
-1. BẢNG TỔNG QUAN CHỈ SỐ NHANH (Executive Summary Dashboard):
-   - Bảng so sánh các chỉ số tài chính/vận tải chính: [Chỉ số] | [Mức giá/Tỷ giá hôm nay] | [Tăng/Giảm so với phiên trước] | [Ghi chú].
-2. BÁO CÁO CHI TIẾT 11 HẠNG MỤC:
-   - Trình bày ngắn gọn, gạch đầu dòng rõ ràng từng hạng mục nêu trên kèm số liệu cụ thể.
-   - Luôn ghi rõ nguồn tham khảo hoặc mốc thời gian của số liệu nếu là số liệu ước tính/định kỳ.
-3. CẢNH BÁO RỦI RO & KHUYẾN NGHỊ TRONG NGÀY (Alerts & Actionable Insights):
-   - 3 đến 5 điểm nóng cần lưu ý đặc biệt cho phòng Mua hàng (Procurement), Xuất Nhập khẩu (Import-Export) và Logistics để chủ động đàm phán hợp đồng hoặc điều phối vận tải.
+
 YÊU CẦU ĐỊNH DẠNG:
 - Chỉ trả về mã HTML sạch, nằm trong các thẻ: <h3>, <p>, <ul>, <li>, <strong>.
 - Không bọc trong ```html ... ```.
@@ -59,11 +45,13 @@ YÊU CẦU ĐỊNH DẠNG:
 """
 
 print("Đang gọi Gemini lấy tin tức thị trường...")
+
+# Sử dụng cú pháp Tool chuẩn của google-genai SDK
 response = client.models.generate_content(
     model="gemini-2.5-flash",
     contents=prompt,
     config=types.GenerateContentConfig(
-        tools=[{"google_search": {}}],
+        tools=[types.Tool(google_search=types.GoogleSearch())],
         temperature=0.3,
     ),
 )
