@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOGISTICS ARROW - Nền Tảng Hỗ Trợ Ra Quyết Định Logistics Dệt May</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f5fa',
+              100: '#e1ecf5',
+              500: '#1d4ed8',
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden text-sm">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between flex-shrink-0 z-30 shadow-xl">
+    <div>
+      <!-- Logo Brand -->
+      <div class="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow-md">
+            ➹
+          </div>
+          <div>
+            <h1 class="font-bold text-white tracking-wider text-base leading-none">LOGISTICS ARROW</h1>
+            <span class="text-[10px] text-blue-400 font-medium tracking-tight">HỖ TRỢ RA QUYẾT ĐỊNH DỆT MAY</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Demo Bar -->
+      <div class="p-3 bg-slate-850 border-b border-slate-800">
+        <button onclick="app.runFullDemoFlow()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-3 rounded-lg shadow flex items-center justify-center space-x-2 transition-all transform active:scale-95 text-xs">
+          <span>⚡</span>
+          <span>Chạy Luồng Trình Diễn Toàn Diện</span>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-230px)] custom-scrollbar">
+        <button onclick="app.navigate('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-white bg-blue-600/30 border border-blue-500/30 font-medium transition">
+          <span class="text-base">📊</span> <span>Tổng quan</span>
+        </button>
+        <button onclick="app.navigate('market')" id="nav-market" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">🌐</span> <span>Dữ liệu thị trường</span>
+        </button>
+        <button onclick="app.navigate('company')" id="nav-company" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">📁</span> <span>Dữ liệu doanh nghiệp</span>
+        </button>
+        <button onclick="app.navigate('impact')" id="nav-impact" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">🔍</span> <span>Phân tích tác động</span>
+        </button>
+        <button onclick="app.navigate('risk')" id="nav-risk" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">⚠️</span> <span>Cảnh báo rủi ro</span>
+        </button>
+        <button onclick="app.navigate('scenario')" id="nav-scenario" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">🎯</span> <span>Mô phỏng kịch bản</span>
+        </button>
+        <button onclick="app.navigate('decision')" id="nav-decision" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">⚖️</span> <span>So sánh phương án</span>
+        </button>
+        <button onclick="app.navigate('trade')" id="nav-trade" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">📋</span> <span>Tra cứu thương mại</span>
+        </button>
+        <button onclick="app.navigate('assistant')" id="nav-assistant" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">🤖</span> <span>Trợ lý phân tích</span>
+        </button>
+        <button onclick="app.navigate('reports')" id="nav-reports" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">📄</span> <span>Báo cáo</span>
+        </button>
+        <button onclick="app.navigate('settings')" id="nav-settings" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition">
+          <span class="text-base">⚙️</span> <span>Cài đặt hệ thống</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Privacy & Mode Indicators -->
+    <div class="p-4 border-t border-slate-800 bg-slate-950 text-xs space-y-2">
+      <div class="flex items-center justify-between text-slate-400">
+        <span>Bảo mật dữ liệu:</span>
+        <span class="text-emerald-400 font-semibold flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 inline-block"></span> Phân tách nội bộ</span>
+      </div>
+      <div class="flex items-center justify-between text-slate-400">
+        <span>Trạng thái hệ thống:</span>
+        <span class="bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded text-[11px] font-mono">DỮ LIỆU MẪU</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Top Bar -->
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20">
+      <div class="flex items-center space-x-4 flex-1 max-w-xl">
+        <div class="relative w-full">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">🔎</span>
+          <input type="text" id="global-search" oninput="app.handleGlobalSearch(this.value)" placeholder="Tìm kiếm nhanh lô hàng, nhà cung cấp, nguyên liệu, tuyến đường..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+          <div id="search-results-dropdown" class="hidden absolute top-10 left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto p-2"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center space-x-2 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dữ liệu thị trường: <b id="topbar-freshness" class="text-slate-700">Vừa cập nhật</b></span>
+          <button onclick="app.refreshMarketData(true)" title="Cập nhật dữ liệu thị trường" class="text-blue-600 hover:text-blue-800 ml-1">🔄</button>
+        </div>
+
+        <!-- Notification Bell -->
+        <div class="relative">
+          <button onclick="app.toggleNotifications()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 relative">
+            <span class="text-lg">🔔</span>
+            <span id="notif-badge" class="absolute top-1 right-1 bg-red-500 text-white font-bold text-[9px] w-4 h-4 rounded-full flex items-center justify-center">3</span>
+          </button>
+          <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 p-3">
+            <div class="flex items-center justify-between border-b pb-2 mb-2">
+              <span class="font-bold text-xs text-slate-800">Thông báo & Biến động</span>
+              <button onclick="app.clearNotifications()" class="text-[11px] text-blue-600 hover:underline">Đã xem hết</button>
+            </div>
+            <div id="notif-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar text-xs"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 border-l pl-4 border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
+            DM
+          </div>
+          <div class="text-left hidden lg:block">
+            <div class="font-semibold text-xs text-slate-800">DN Dệt May Việt Hưng</div>
+            <div class="text-[10px] text-slate-400">Trưởng phòng Logistics</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dynamic View Container -->
+    <main id="app-container" class="flex-1 overflow-y-auto p-6 custom-scrollbar bg-slate-50">
+    </main>
+  </div>
+
+  <!-- Global Modal Container -->
+  <div id="global-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="global-modal-content" class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-100">
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl text-xs flex items-center space-x-3 border-l-4 border-blue-500 transition-all duration-300">
+    <span id="toast-icon">ℹ️</span>
+    <span id="toast-message">Nội dung thông báo</span>
+  </div>
+
+  <!-- ==================== APPLICATION SCRIPTS & ENGINES ==================== -->
+  <script>
+    // --- MOCK DATABASE & STATE ---
+    const DB = {
+      marketIndicators: [
+        { id: 'M01', name: 'Cước vận tải biển Thượng Hải - Hải Phòng', category: 'Logistics', value: 96, baseValue: 80, unit: 'USD/tấn', changePct: 20.0, source: 'Chỉ số Vận tải container SCFI', updated: '2026-09-21 14:30', freshness: '2 giờ trước', isStale: false },
+        { id: 'M02', name: 'Giá Cotton Cotlook A Index', category: 'Nguyên liệu', value: 98.4, baseValue: 91.8, unit: 'Cent/lb', changePct: 7.2, source: 'Cotlook Limited', updated: '2026-09-21 15:00', freshness: '1.5 giờ trước', isStale: false },
+        { id: 'M03', name: 'Giá Sợi Polyester DTY 150D', category: 'Nguyên liệu', value: 1420, baseValue: 1380, unit: 'USD/tấn', changePct: 2.9, source: 'Hiệp hội Bông Sợi VN (VCOSA)', updated: '2026-09-21 09:15', freshness: '7 giờ trước', isStale: false },
+        { id: 'M04', name: 'Giá Vải Cotton Dệt Thoi 100%', category: 'Nguyên liệu', value: 2.85, baseValue: 2.80, unit: 'USD/mét', changePct: 1.8, source: 'Sở Giao Dịch Hàng Hóa', updated: '2026-09-21 08:00', freshness: '8 giờ trước', isStale: false },
+        { id: 'M05', name: 'Dầu Brent Thô', category: 'Nhiên liệu', value: 84.5, baseValue: 79.7, unit: 'USD/thùng', changePct: 6.0, source: 'Sàn London ICE', updated: '2026-09-21 15:45', freshness: '45 phút trước', isStale: false },
+        { id: 'M06', name: 'Nhiên liệu tàu biển VLSFO 0.5%', category: 'Nhiên liệu', value: 680, baseValue: 645, unit: 'USD/tấn', changePct: 5.4, source: 'Singapore Bunker Exchange', updated: '2026-09-21 12:00', freshness: '4 giờ trước', isStale: false },
+        { id: 'M07', name: 'Phụ phí mùa cao điểm (PSS) Châu Á', category: 'Logistics', value: 150, baseValue: 100, unit: 'USD/FEU', changePct: 50.0, source: 'Công bố các Hãng tàu', updated: '2026-09-20 18:00', freshness: '22 giờ trước', isStale: false },
+        { id: 'M08', name: 'Tỷ giá quy đổi USD / VND', category: 'Tiền tệ', value: 25000, baseValue: 24850, unit: 'VND/USD', changePct: 0.6, source: 'Ngân hàng Ngoại thương VN', updated: '2026-09-21 16:00', freshness: '30 phút trước', isStale: false },
+        { id: 'M09', name: 'Chỉ số ùn tắc Cảng Ninh Ba & Hải Phòng', category: 'Rủi ro', value: 3.8, baseValue: 2.0, unit: 'Ngày chờ cầu', changePct: 90.0, source: 'AIS & Báo cáo Cảng biển', updated: '2026-09-21 11:30', freshness: '5 giờ trước', isStale: false },
+        { id: 'M10', name: 'Phí lưu kho bãi trung bình (Demurrage)', category: 'Logistics', value: 35, baseValue: 30, unit: 'USD/cont/ngày', changePct: 16.7, source: 'Hiệp hội Cảng biển VN', updated: '2026-09-18 10:00', freshness: '72 giờ trước', isStale: true }
+      ],
+
+      shipments: [
+        { id: 'SH001', orderId: 'DH-2026-88', material: 'Sợi Polyester', quantity: 100, unit: 'tấn', supplier: 'Chiết Giang Fiber Corp', origin: 'Ninh Ba, Trung Quốc', destination: 'Hải Phòng, Việt Nam', route: 'Ninh Ba - Hải Phòng', mode: 'Đường biển', baseFreight: 80, currentFreight: 96, currency: 'USD', transitDays: 15, currentDelay: 7, eta: '2026-09-30', status: 'Cảnh báo chậm trễ' },
+        { id: 'SH002', orderId: 'DH-2026-89', material: 'Bông Tự Nhiên Chải Kỹ', quantity: 120, unit: 'tấn', supplier: 'Gujarat Cotton Mills', origin: 'Mundra, Ấn Độ', destination: 'Hải Phòng, Việt Nam', route: 'Mundra - Hải Phòng', mode: 'Đường biển', baseFreight: 110, currentFreight: 115, currency: 'USD', transitDays: 24, currentDelay: 2, eta: '2026-10-05', status: 'Bình thường' },
+        { id: 'SH003', orderId: 'DH-2026-90', material: 'Vải Cotton Khổ Rộng', quantity: 45, unit: 'tấn', supplier: 'TexHong International', origin: 'Quảng Châu, Trung Quốc', destination: 'Hải Phòng, Việt Nam', route: 'Quảng Châu - Lạng Sơn - HN', mode: 'Đường bộ', baseFreight: 140, currentFreight: 140, currency: 'USD', transitDays: 5, currentDelay: 0, eta: '2026-09-24', status: 'Đang thông quan' },
+        { id: 'SH004', orderId: 'DH-2026-91', material: 'Hóa chất trợ nhuộm', quantity: 20, unit: 'tấn', supplier: 'Huntsman Specialty', origin: 'Busan, Hàn Quốc', destination: 'Cát Lái, TP. HCM', route: 'Busan - Cát Lái', mode: 'Đường biển', baseFreight: 65, currentFreight: 70, currency: 'USD', transitDays: 9, currentDelay: 1, eta: '2026-09-28', status: 'Bình thường' },
+        { id: 'SH005', orderId: 'DH-2026-92', material: 'Khóa kéo & Phụ liệu may', quantity: 15, unit: 'tấn', supplier: 'YKK Fastening', origin: 'Kobe, Nhật Bản', destination: 'Hải Phòng, Việt Nam', route: 'Kobe - Hải Phòng', mode: 'Đường biển', baseFreight: 85, currentFreight: 88, currency: 'USD', transitDays: 12, currentDelay: 0, eta: '2026-10-02', status: 'Bình thường' },
+        { id: 'SH006', orderId: 'DH-2026-93', material: 'Xơ Bông Brazil Hạng 1', quantity: 150, unit: 'tấn', supplier: 'Amaggi Agro', origin: 'Santos, Brazil', destination: 'Cái Mép, Việt Nam', route: 'Santos - Cái Mép', mode: 'Đường biển', baseFreight: 165, currentFreight: 185, currency: 'USD', transitDays: 42, currentDelay: 4, eta: '2026-10-25', status: 'Theo dõi' },
+        { id: 'SH007', orderId: 'DH-2026-94', material: 'Sợi TC 65/35', quantity: 80, unit: 'tấn', supplier: 'Tainan Spinning', origin: 'Cao Hùng, Đài Loan', destination: 'Hải Phòng, Việt Nam', route: 'Cao Hùng - Hải Phòng', mode: 'Đường biển', baseFreight: 75, currentFreight: 82, currency: 'USD', transitDays: 7, currentDelay: 1, eta: '2026-09-29', status: 'Bình thường' },
+        { id: 'SH008', orderId: 'DH-2026-95', material: 'Vải Lót Kháng Khuẩn', quantity: 35, unit: 'tấn', supplier: 'Formosa Taffeta', origin: 'Đài Trung, Đài Loan', destination: 'Cát Lái, TP. HCM', route: 'Đài Trung - Cát Lái', mode: 'Đường biển', baseFreight: 70, currentFreight: 72, currency: 'USD', transitDays: 8, currentDelay: 0, eta: '2026-10-01', status: 'Bình thường' },
+        { id: 'SH009', orderId: 'DH-2026-96', material: 'Vải Kaki Spandex', quantity: 60, unit: 'tấn', supplier: 'Nantong Weaving', origin: 'Thượng Hải, Trung Quốc', destination: 'Hải Phòng, Việt Nam', route: 'Thượng Hải - Hải Phòng', mode: 'Đường biển', baseFreight: 85, currentFreight: 102, currency: 'USD', transitDays: 16, currentDelay: 5, eta: '2026-10-07', status: 'Cảnh báo trễ' },
+        { id: 'SH010', orderId: 'DH-2026-97', material: 'Chỉ may công nghiệp', quantity: 10, unit: 'tấn', supplier: 'Coats Phong Phú', origin: 'Nội địa / Đồng Nai', destination: 'Nhà máy Hưng Yên', route: 'Đồng Nai - Hưng Yên', mode: 'Đường sắt', baseFreight: 50, currentFreight: 50, currency: 'USD', transitDays: 3, currentDelay: 0, eta: '2026-09-23', status: 'Đang vận chuyển' }
+      ],
+
+      orders: [
+        { id: 'DH-2026-88', customer: 'Uniqlo Fast Retailing', product: 'Áo Khoác Chống Gió Nam', quantity: 120000, unit: 'chiếc', prodStart: '2026-10-01', exportDeadline: '2026-11-15', revenueVnd: 28500000000, status: 'Nguy cơ do thiếu Sợi SH001' },
+        { id: 'DH-2026-89', customer: 'Decathlon Sport', product: 'Quần Áo Thể Thao T-Shirt', quantity: 200000, unit: 'chiếc', prodStart: '2026-10-10', exportDeadline: '2026-12-01', revenueVnd: 34000000000, status: 'Trong kế hoạch' },
+        { id: 'DH-2026-90', customer: 'H&M Hennes & Mauritz', product: 'Áo Sơ Mi Cotton Nam Nữ', quantity: 85000, unit: 'chiếc', prodStart: '2026-09-28', exportDeadline: '2026-11-05', revenueVnd: 19500000000, status: 'Trong kế hoạch' },
+        { id: 'DH-2026-91', customer: 'Nike Apparel Group', product: 'Áo Nỉ Có Mũ Fleece', quantity: 95000, unit: 'chiếc', prodStart: '2026-10-05', exportDeadline: '2026-11-20', revenueVnd: 26000000000, status: 'Theo dõi nhuộm' },
+        { id: 'DH-2026-92', customer: 'Zara Inditex', product: 'Đầm Thời Trang Thu Đông', quantity: 50000, unit: 'chiếc', prodStart: '2026-10-12', exportDeadline: '2026-11-28', revenueVnd: 18200000000, status: 'Đủ nguyên liệu' },
+        { id: 'DH-2026-93', customer: 'Target Corp', product: 'Bộ Ga Gối Dệt Cotton', quantity: 70000, unit: 'bộ', prodStart: '2026-11-01', exportDeadline: '2026-12-25', revenueVnd: 22000000000, status: 'Đang theo dõi Bông' },
+        { id: 'DH-2026-94', customer: 'Gap Inc', product: 'Áo Polo Vải Pha TC', quantity: 110000, unit: 'chiếc', prodStart: '2026-10-08', exportDeadline: '2026-11-25', revenueVnd: 21500000000, status: 'Trong kế hoạch' },
+        { id: 'DH-2026-95', customer: 'Muji Ryohin Keikaku', product: 'Đồ Lót Kháng Khuẩn Tự Nhiên', quantity: 150000, unit: 'chiếc', prodStart: '2026-10-15', exportDeadline: '2026-12-10', revenueVnd: 16500000000, status: 'Trong kế hoạch' },
+        { id: 'DH-2026-96', customer: 'Columbia Sportswear', product: 'Quần Dã Ngoại Chống Thấm', quantity: 65000, unit: 'chiếc', prodStart: '2026-10-18', exportDeadline: '2026-12-05', revenueVnd: 24000000000, status: 'Nguy cơ chậm lô vải SH009' },
+        { id: 'DH-2026-97', customer: 'Việt Tiến Garment', product: 'Áo Sơ Mi Xuất Khẩu Nhật', quantity: 40000, unit: 'chiếc', prodStart: '2026-09-26', exportDeadline: '2026-10-30', revenueVnd: 9800000000, status: 'Sẵn sàng sản xuất' }
+      ],
+
+      inventory: [
+        { material: 'Sợi Polyester DTY', stockTons: 96, dailyConsumption: 8.0, safetyStockTons: 64, coverageDays: 12.0, status: 'Cảnh báo thiếu hụt' },
+        { material: 'Bông Tự Nhiên Chải Kỹ', stockTons: 220, dailyConsumption: 10.0, safetyStockTons: 80, coverageDays: 22.0, status: 'An toàn' },
+        { material: 'Vải Cotton Khổ Rộng', stockTons: 40, dailyConsumption: 3.5, safetyStockTons: 20, coverageDays: 11.4, status: 'An toàn' },
+        { material: 'Hóa chất trợ nhuộm', stockTons: 35, dailyConsumption: 1.2, safetyStockTons: 15, coverageDays: 29.2, status: 'Dồi dào' },
+        { material: 'Khóa kéo & Phụ liệu may', stockTons: 25, dailyConsumption: 1.5, safetyStockTons: 10, coverageDays: 16.7, status: 'An toàn' },
+        { material: 'Xơ Bông Brazil Hạng 1', stockTons: 310, dailyConsumption: 9.0, safetyStockTons: 120, coverageDays: 34.4, status: 'Dồi dào' },
+        { material: 'Sợi TC 65/35', stockTons: 115, dailyConsumption: 6.0, safetyStockTons: 45, coverageDays: 19.2, status: 'An toàn' },
+        { material: 'Vải Lót Kháng Khuẩn', stockTons: 50, dailyConsumption: 2.5, safetyStockTons: 25, coverageDays: 20.0, status: 'An toàn' },
+        { material: 'Vải Kaki Spandex', stockTons: 48, dailyConsumption: 4.0, safetyStockTons: 30, coverageDays: 12.0, status: 'Theo dõi sát' },
+        { material: 'Chỉ may công nghiệp', stockTons: 18, dailyConsumption: 0.8, safetyStockTons: 8, coverageDays: 22.5, status: 'An toàn' }
+      ],
+
+      riskEvents: [
+        { id: 'R01', route: 'Ninh Ba - Hải Phòng', category: 'Ùn tắc cảng & Cước biển', level: 'Cao', delayPotential: 7, costImpactMio: 120, affectedOrders: 4, inventoryCoverageDays: 12, summary: 'Cảng Ninh Ba dồn ứ sau bão; hãng tàu áp phụ phí khẩn cấp +20% và kéo dài thời gian cập cảng thêm 7 ngày.' },
+        { id: 'R02', route: 'Mundra - Hải Phòng', category: 'Thiếu vỏ container rỗng', level: 'Trung bình', delayPotential: 3, costImpactMio: 45, affectedOrders: 2, inventoryCoverageDays: 22, summary: 'Khu vực cảng Tây Ấn Độ thiếu hụt cục bộ container 40HC chuyên dụng cho sợi dệt.' },
+        { id: 'R03', route: 'Quảng Châu - Lạng Sơn', category: 'Kiểm soát biên giới', level: 'Thấp', delayPotential: 1, costImpactMio: 15, affectedOrders: 1, inventoryCoverageDays: 11, summary: 'Lực lượng biên phòng siết chặt chứng từ xuất xứ CO Form E nhưng dòng xe vẫn thông suốt.' },
+        { id: 'R04', route: 'Santos - Cái Mép', category: 'Biến động tuyến kênh đào Panama', level: 'Trung bình', delayPotential: 5, costImpactMio: 95, affectedOrders: 1, inventoryCoverageDays: 34, summary: 'Hạn hán hạ mớn nước khiến tàu chở xơ bông từ Nam Mỹ phải chuyển hướng qua Mũi Hảo Vọng.' },
+        { id: 'R05', route: 'Thượng Hải - Hải Phòng', category: 'Cước tăng theo đợt GRI', level: 'Cao', delayPotential: 5, costImpactMio: 70, affectedOrders: 2, inventoryCoverageDays: 12, summary: 'Liên minh hãng tàu Ocean Alliance áp dụng phụ thu tăng giá chung vào cuối tháng.' }
+      ],
+
+      tradeRecords: [
+        { hsCode: '5402.33.00', product: 'Sợi Filament Polyester có tạo kết cấu (DTY)', taxRate: '0%', normalRate: '5%', originReq: 'C/O Mẫu E (Từ sợi trở đi)', fta: 'Hiệp định ACFTA (ASEAN - TQ)', updateDate: '2026-08-15' },
+        { hsCode: '5201.00.00', product: 'Bông chưa chải thô hoặc chải kỹ', taxRate: '0%', normalRate: '0%', originReq: 'Chứng nhận kiểm dịch thực vật', fta: 'Biểu thuế nhập khẩu ưu đãi MFN', updateDate: '2026-09-01' },
+        { hsCode: '5205.12.00', product: 'Sợi Cotton đơn chải thô độ mảnh vừa', taxRate: '0%', normalRate: '5%', originReq: 'C/O Mẫu AI (ASEAN - Ấn Độ)', fta: 'Hiệp định AIFTA', updateDate: '2026-07-20' },
+        { hsCode: '5208.32.00', product: 'Vải dệt thoi từ sợi bông nhuộm màu', taxRate: '0%', normalRate: '12%', originReq: 'C/O Mẫu RCEP / Mẫu E', fta: 'Hiệp định RCEP / ACFTA', updateDate: '2026-09-10' },
+        { hsCode: '6203.42.00', product: 'Quần dài, quần short từ bông (Thành phẩm XK)', taxRate: '0%', normalRate: '12%', originReq: 'Quy tắc từ vải trở đi (Fabric Forward)', fta: 'EVFTA (Việt Nam - EU)', updateDate: '2026-06-30' }
+      ],
+
+      // Configuration settings
+      settings: {
+        currency: 'VND',
+        usdExchangeRate: 25000,
+        riskTolerance: 'Trung bình', // Thấp, Trung bình, Cao
+        safetyStockThresholdDays: 14,
+        autoRefreshIntervalSec: 60,
+        weights: {
+          cost: 40,
+          time: 25,
+          risk: 20,
+          service: 10,
+          flexibility: 5
+        }
+      },
+
+      notifications: [
+        { id: 1, title: 'Cước tuyến Trung Quốc - Việt Nam tăng 20%', time: '10 phút trước', type: 'danger', read: false },
+        { id: 2, title: 'Lô hàng SH001 (100 tấn Sợi) có nguy cơ trễ 7 ngày', time: '40 phút trước', type: 'warning', read: false },
+        { id: 3, title: 'Tồn kho Sợi Polyester chỉ còn đáp ứng 12 ngày', time: '1 giờ trước', type: 'warning', read: false },
+        { id: 4, title: 'Hệ thống cập nhật thành công 10 chỉ số thị trường', time: '2 giờ trước', type: 'info', read: true }
+      ]
+    };
+
+    // --- CALCULATION ENGINE ---
+    const calculationService = {
+      // 1. Tính tổng chi phí logistics của lô hàng
+      calculateTotalLogisticsCost(materialCost, freightCost, insuranceCost, portCost, inlandCost, taxCost, otherCost) {
+        return (materialCost || 0) + (freightCost || 0) + (insuranceCost || 0) + (portCost || 0) + (inlandCost || 0) + (taxCost || 0) + (otherCost || 0);
+      },
+
+      // 2. Tính chi phí logistics trên mỗi tấn (hoặc kg)
+      calculateUnitCost(totalCost, quantityTons) {
+        if (!quantityTons || quantityTons <= 0) return 0;
+        return totalCost / quantityTons;
+      },
+
+      // 3. Tính độ biến động chi phí
+      calculateCostChange(baseCost, newCost) {
+        const delta = newCost - baseCost;
+        const deltaPct = baseCost > 0 ? (delta / baseCost) * 100 : 0;
+        return { delta, deltaPct };
+      },
+
+      // 4. Tính toán tác động cước biển theo công thức thực tế
+      // Delta C = Q * (F_new - F_base) * ExchangeRate
+      calculateFreightImpact(quantityTons, baseFreightUsd, newFreightUsd, exchangeRate) {
+        const diffUsdPerTon = newFreightUsd - baseFreightUsd;
+        const totalDiffUsd = quantityTons * diffUsdPerTon;
+        const totalDiffVnd = totalDiffUsd * exchangeRate;
+        const diffVndPerTon = diffUsdPerTon * exchangeRate;
+        const totalBaseUsd = quantityTons * baseFreightUsd;
+        const totalNewUsd = quantityTons * newFreightUsd;
+        const pctChange = baseFreightUsd > 0 ? ((newFreightUsd - baseFreightUsd) / baseFreightUsd) * 100 : 0;
+
+        return {
+          diffUsdPerTon,
+          totalDiffUsd,
+          totalDiffVnd,
+          diffVndPerTon,
+          totalBaseUsd,
+          totalNewUsd,
+          pctChange
+        };
+      },
+
+      // 5. Tính toán tồn kho và nguy cơ thiếu hụt
+      // Shortage = Required - (Stock - DailyConsumption * DisruptionDays)
+      calculateInventoryShortage(stockTons, dailyConsumption, regularTransitDays, delayDays, requiredTons) {
+        const coverageDays = dailyConsumption > 0 ? stockTons / dailyConsumption : 0;
+        const totalWaitDays = regularTransitDays + delayDays;
+        const consumedWhileWaiting = totalWaitDays * dailyConsumption;
+        const remainingStock = Math.max(0, stockTons - consumedWhileWaiting);
+        const shortageTons = Math.max(0, requiredTons - stockTons);
+        const canSustainDays = coverageDays;
+        const isDeficit = coverageDays < totalWaitDays;
+
+        return {
+          coverageDays: Number(coverageDays.toFixed(1)),
+          totalWaitDays,
+          consumedWhileWaiting: Number(consumedWhileWaiting.toFixed(1)),
+          remainingStock: Number(remainingStock.toFixed(1)),
+          shortageTons: Number(shortageTons.toFixed(1)),
+          isDeficit,
+          deficitDays: Math.max(0, totalWaitDays - coverageDays)
+        };
+      },
+
+      // 6. Tính điểm số đa tiêu chí có trọng số (Multi-criteria Weighted Score)
+      // Score_j = Sum(w_i * s_ij)
+      calculateWeightedScore(metrics, weights) {
+        // Chuẩn hóa điểm 0 - 100
+        // metrics: { costScore, timeScore, riskScore, serviceScore, flexibilityScore }
+        const totalWeight = (weights.cost + weights.time + weights.risk + weights.service + weights.flexibility) || 100;
+        const score = (
+          (metrics.costScore * weights.cost) +
+          (metrics.timeScore * weights.time) +
+          (metrics.riskScore * weights.risk) +
+          (metrics.serviceScore * weights.service) +
+          (metrics.flexibilityScore * weights.flexibility)
+        ) / totalWeight;
+        return Number(score.toFixed(1));
+      }
+    };
+
+    // --- APPLICATION CONTROLLER & UI ROUTER ---
+    const app = {
+      currentPage: 'dashboard',
+      charts: {},
+      selectedShipmentForImpact: 'SH001',
+      impactCustomChangePct: 20,
+      scenarioInput: {
+        name: 'Cú sốc giá cước vận tải +20%',
+        freightChangePct: 20,
+        cottonChangePct: 5,
+        fuelChangePct: 10,
+        delayDays: 7,
+        exchangeRateChangePct: 0.6
+      },
+      decisionWeights: { ...DB.settings.weights },
+
+      init() {
+        this.renderNotifications();
+        this.navigate('dashboard');
+        // Close dropdown when click outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('#notif-dropdown') && !e.target.closest('button[onclick="app.toggleNotifications()"]')) {
+            document.getElementById('notif-dropdown').classList.add('hidden');
+          }
+          if (!e.target.closest('#search-results-dropdown') && !e.target.closest('#global-search')) {
+            document.getElementById('search-results-dropdown').classList.add('hidden');
+          }
+        });
+      },
+
+      navigate(pageId, params = {}) {
+        this.currentPage = pageId;
+
+        // Update nav items
+        document.querySelectorAll('.nav-item').forEach(el => {
+          el.className = 'nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-slate-800 font-medium transition';
+        });
+        const activeNav = document.getElementById(`nav-${pageId}`);
+        if (activeNav) {
+          activeNav.className = 'nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left text-white bg-blue-600/30 border border-blue-500/30 font-medium transition';
+        }
+
+        // Render Page View
+        const container = document.getElementById('app-container');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (pageId === 'dashboard') {
+          container.innerHTML = this.renderDashboard();
+          setTimeout(() => this.initDashboardCharts(), 50);
+        } else if (pageId === 'market') {
+          container.innerHTML = this.renderMarketPage();
+        } else if (pageId === 'company') {
+          container.innerHTML = this.renderCompanyPage();
+        } else if (pageId === 'impact') {
+          if (params.shipmentId) this.selectedShipmentForImpact = params.shipmentId;
+          if (params.changePct) this.impactCustomChangePct = params.changePct;
+          container.innerHTML = this.renderImpactPage();
+        } else if (pageId === 'risk') {
+          container.innerHTML = this.renderRiskPage();
+        } else if (pageId === 'scenario') {
+          container.innerHTML = this.renderScenarioPage();
+        } else if (pageId === 'decision') {
+          container.innerHTML = this.renderDecisionLab();
+          setTimeout(() => this.initDecisionChart(), 50);
+        } else if (pageId === 'trade') {
+          container.innerHTML = this.renderTradePage();
+        } else if (pageId === 'assistant') {
+          container.innerHTML = this.renderAssistantPage();
+        } else if (pageId === 'reports') {
+          container.innerHTML = this.renderReportsPage();
+        } else if (pageId === 'settings') {
+          container.innerHTML = this.renderSettingsPage();
+        }
+      },
+
+      // --- TOAST HELPER ---
+      showToast(message, icon = '✅') {
+        const toast = document.getElementById('toast');
+        const msg = document.getElementById('toast-message');
+        const ic = document.getElementById('toast-icon');
+        msg.textContent = message;
+        ic.textContent = icon;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 3200);
+      },
+
+      // --- MODAL HELPER ---
+      openModal(htmlContent) {
+        const modal = document.getElementById('global-modal');
+        const modalContent = document.getElementById('global-modal-content');
+        modalContent.innerHTML = htmlContent;
+        modal.classList.remove('hidden');
+      },
+
+      closeModal() {
+        document.getElementById('global-modal').classList.add('hidden');
+      },
+
+      // --- NOTIFICATIONS ---
+      toggleNotifications() {
+        const drop = document.getElementById('notif-dropdown');
+        drop.classList.toggle('hidden');
+      },
+
+      clearNotifications() {
+        DB.notifications.forEach(n => n.read = true);
+        this.renderNotifications();
+        this.showToast('Đã đánh dấu xem toàn bộ thông báo', '✓');
+      },
+
+      renderNotifications() {
+        const list = document.getElementById('notif-list');
+        const badge = document.getElementById('notif-badge');
+        const unreadCount = DB.notifications.filter(n => !n.read).length;
+        badge.textContent = unreadCount;
+        if (unreadCount === 0) badge.classList.add('hidden');
+        else badge.classList.remove('hidden');
+
+        list.innerHTML = DB.notifications.map(n => `
+          <div class="p-2 rounded border-l-4 ${n.type === 'danger' ? 'border-red-500 bg-red-50/50' : n.type === 'warning' ? 'border-amber-500 bg-amber-50/50' : 'border-blue-500 bg-blue-50/50'} ${n.read ? 'opacity-60' : 'font-medium'}">
+            <div class="text-slate-800 text-[11px]">${n.title}</div>
+            <div class="text-[10px] text-slate-400 mt-1">${n.time}</div>
+          </div>
+        `).join('');
+      },
+
+      // --- GLOBAL SEARCH ---
+      handleGlobalSearch(query) {
+        const drop = document.getElementById('search-results-dropdown');
+        if (!query || query.trim().length < 2) {
+          drop.classList.add('hidden');
+          return;
+        }
+        const q = query.toLowerCase();
+        const matchedShipments = DB.shipments.filter(s => s.id.toLowerCase().includes(q) || s.material.toLowerCase().includes(q) || s.supplier.toLowerCase().includes(q) || s.route.toLowerCase().includes(q));
+        const matchedOrders = DB.orders.filter(o => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || o.product.toLowerCase().includes(q));
+
+        if (matchedShipments.length === 0 && matchedOrders.length === 0) {
+          drop.innerHTML = `<div class="p-3 text-slate-400 text-center text-xs">Không tìm thấy dữ liệu khớp với "${query}"</div>`;
+        } else {
+          let html = '';
+          if (matchedShipments.length > 0) {
+            html += `<div class="text-[11px] font-bold text-slate-400 uppercase px-2 py-1">Lô hàng vận chuyển</div>`;
+            matchedShipments.forEach(s => {
+              html += `<div onclick="app.navigate('impact', { shipmentId: '${s.id}' });" class="p-2 hover:bg-slate-100 rounded cursor-pointer flex justify-between items-center text-xs">
+                <div><b class="text-blue-600">${s.id}</b> - ${s.material} (${s.supplier})</div>
+                <span class="text-slate-400 text-[10px]">${s.route}</span>
+              </div>`;
+            });
+          }
+          if (matchedOrders.length > 0) {
+            html += `<div class="text-[11px] font-bold text-slate-400 uppercase px-2 py-1 mt-1">Đơn hàng xuất khẩu</div>`;
+            matchedOrders.forEach(o => {
+              html += `<div onclick="app.navigate('company');" class="p-2 hover:bg-slate-100 rounded cursor-pointer flex justify-between items-center text-xs">
+                <div><b class="text-slate-800">${o.id}</b> - ${o.product} (${o.customer})</div>
+                <span class="text-slate-400 text-[10px]">${o.quantity.toLocaleString('vi-VN')} chiếc</span>
+              </div>`;
+            });
+          }
+          drop.innerHTML = html;
+        }
+        drop.classList.remove('hidden');
+      },
+
+      // --- REFRESH MARKET DATA ACTION ---
+      refreshMarketData(showFeedback = true) {
+        DB.marketIndicators.forEach(m => {
+          const jitter = (Math.random() * 2 - 1) * 0.5;
+          m.value = Number((m.value + jitter).toFixed(2));
+          m.updated = 'Vừa xong';
+          m.freshness = '1 phút trước';
+          m.isStale = false;
+        });
+        document.getElementById('topbar-freshness').textContent = 'Vừa cập nhật';
+        if (showFeedback) {
+          this.showToast('Đã đồng bộ và chuẩn hóa 10 chỉ số thị trường logistics!', '🔄');
+          if (this.currentPage === 'market' || this.currentPage === 'dashboard') {
+            this.navigate(this.currentPage);
+          }
+        }
+      },
+
+      // --- DATA TRANSPARENCY MODAL ---
+      showDataTransparency(varName, val, unit, source, updated, dataType = 'calculated') {
+        const badgeClass = {
+          actual: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+          market: 'bg-blue-100 text-blue-800 border-blue-300',
+          scenario: 'bg-amber-100 text-amber-800 border-amber-300',
+          calculated: 'bg-purple-100 text-purple-800 border-purple-300'
+        }[dataType] || 'bg-slate-100 text-slate-800 border-slate-300';
+
+        const typeLabel = {
+          actual: 'Dữ liệu nội bộ thực tế doanh nghiệp',
+          market: 'Dữ liệu chỉ số thị trường đã chuẩn hóa',
+          scenario: 'Tham số giả định trong kịch bản',
+          calculated: 'Kết quả động cơ tính toán độc lập'
+        }[dataType] || 'Dữ liệu xác thực';
+
+        const content = `
+          <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">🔎</span>
+              <h3 class="font-bold text-slate-800 text-base">Minh bạch nguồn gốc dữ liệu</h3>
+            </div>
+            <button onclick="app.closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+          </div>
+          <div class="p-6 space-y-4 text-xs">
+            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Chỉ tiêu / Biến số</span>
+                <span class="font-bold text-slate-800 text-sm">${varName}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Giá trị ghi nhận</span>
+                <span class="font-bold text-blue-600 text-sm">${val} ${unit}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Phân loại bản chất</span>
+                <span class="inline-block mt-0.5 px-2 py-0.5 rounded text-[11px] font-semibold border ${badgeClass}">${typeLabel}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Thời điểm ghi nhận</span>
+                <span class="font-mono text-slate-700">${updated}</span>
+              </div>
+            </div>
+            <div>
+              <span class="font-bold text-slate-700 block mb-1 text-[11px]">Nguồn dữ liệu & Giao thức xác thực:</span>
+              <div class="p-3 bg-white border border-slate-200 rounded-lg text-slate-600 space-y-1 leading-relaxed">
+                <p>• <b>Nguồn gốc:</b> ${source}</p>
+                <p>• <b>Thuật toán xử lý:</b> Dữ liệu sau thu thập đã được chuẩn hóa qua quy chuẩn lọc nhiễu, làm sạch đơn vị đo lường và ánh xạ trực tiếp vào cấu trúc mã lô hàng doanh nghiệp.</p>
+                <p>• <b>Cam kết bảo mật:</b> Dữ liệu doanh nghiệp được xử lý cục bộ, không gửi ra ngoài hệ thống và phân tách biệt lập với luồng thông tin công cộng.</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <button onclick="app.closeModal()" class="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 text-xs font-semibold">Đóng hộp thoại</button>
+          </div>
+        `;
+        this.openModal(content);
+      },
+
+      // ==============================================================
+      // 1. PAGE: DASHBOARD / TỔNG QUAN
+      // ==============================================================
+      renderDashboard() {
+        return `
+          <div class="space-y-6">
+            <!-- Header section -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h1 class="text-xl font-bold text-slate-900">Bảng Tổng Quan Ra Quyết Định Logistics</h1>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">HOẠT ĐỘNG THỜI GIAN THỰC</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Biến động thị trường → Tác động doanh nghiệp → Kịch bản mô phỏng → Hỗ trợ quyết định</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.runFullDemoFlow()" class="px-3.5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow-sm flex items-center space-x-2">
+                  <span>⚡</span> <span>Chạy Luồng Minh Họa</span>
+                </button>
+                <button onclick="app.navigate('company')" class="px-3.5 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium text-xs flex items-center space-x-1">
+                  <span>📤</span> <span>Tải lên dữ liệu DN</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Arrow Insight Card (Dynamic Synthesis) -->
+            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-xl p-5 text-white shadow-lg border border-blue-800 relative overflow-hidden">
+              <div class="flex items-start justify-between relative z-10">
+                <div class="space-y-2 max-w-3xl">
+                  <div class="flex items-center space-x-2">
+                    <span class="bg-amber-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded">TỔNG HỢP NHANH TỪ HỆ THỐNG</span>
+                    <span class="text-blue-200 text-xs font-mono">Dựa trên dữ liệu SH001 & Cước vận tải biển</span>
+                  </div>
+                  <p class="text-sm font-medium leading-relaxed text-blue-50">
+                    Cước vận tải tuyến <b>Trung Quốc → Hải Phòng</b> vừa tăng <b class="text-amber-300">+20%</b> (từ 80 USD lên 96 USD/tấn). Đối với lô hàng <b class="text-white underline cursor-pointer" onclick="app.navigate('impact', { shipmentId: 'SH001' })">SH001</b> (100 tấn Sợi Polyester), chi phí logistics phát sinh tăng thêm <b class="text-amber-300">40.000.000 VNĐ</b> (tương đương 400.000 VNĐ/tấn). Nếu thời gian vận chuyển kéo dài thêm 7 ngày do ùn tắc cảng, tồn kho hiện hữu (12 ngày) sẽ <b class="text-red-300">thiếu hụt 4 tấn nguyên liệu</b> trước khi hàng kịp về xưởng.
+                  </p>
+                  <div class="pt-2 flex items-center space-x-3">
+                    <button onclick="app.navigate('impact', { shipmentId: 'SH001', changePct: 20 })" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-400 text-white rounded text-xs font-semibold shadow">
+                      Phân tích tác động chi tiết →
+                    </button>
+                    <button onclick="app.navigate('scenario')" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded text-xs font-medium border border-white/20">
+                      Mô phỏng kịch bản trễ hàng
+                    </button>
+                    <button onclick="app.showDataTransparency('Cước vận tải TQ - HP', '96', 'USD/tấn', 'SCFI & Hãng tàu COSCO', 'Hôm nay', 'market')" class="text-xs text-blue-200 hover:underline">
+                      Xem dữ liệu nguồn
+                    </button>
+                  </div>
+                </div>
+                <div class="hidden lg:block text-5xl opacity-30 select-none">
+                  🧭
+                </div>
+              </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Tổng chi phí logistics</span>
+                <div class="text-lg font-bold text-slate-800 mt-1">12,84 tỷ <span class="text-xs font-normal text-slate-500">VNĐ</span></div>
+                <span class="text-[10px] text-emerald-600 font-medium">↑ 3.2% so với tháng trước</span>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Chi phí logistics / tấn</span>
+                <div class="text-lg font-bold text-slate-800 mt-1">28,4 triệu <span class="text-xs font-normal text-slate-500">VNĐ/tấn</span></div>
+                <span class="text-[10px] text-amber-600 font-medium">+400.000 đ/tấn biến động</span>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Rủi ro đang theo dõi</span>
+                <div class="text-lg font-bold text-amber-600 mt-1">5 <span class="text-xs font-normal text-slate-500">sự kiện</span></div>
+                <span class="text-[10px] text-red-600 font-semibold">2 tuyến mức độ Cao</span>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Lô hàng có cảnh báo</span>
+                <div class="text-lg font-bold text-red-600 mt-1">3 <span class="text-xs font-normal text-slate-500">/ 10 lô</span></div>
+                <span class="text-[10px] text-red-500 font-medium">SH001, SH006, SH009</span>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Đáp ứng nguyên liệu</span>
+                <div class="text-lg font-bold text-blue-600 mt-1">94,2%</div>
+                <span class="text-[10px] text-slate-500 font-medium">Mục tiêu: ≥ 98.0%</span>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <span class="text-slate-400 text-[11px] block">Thời gian phục hồi dự kiến</span>
+                <div class="text-lg font-bold text-slate-800 mt-1">5,5 <span class="text-xs font-normal text-slate-500">ngày</span></div>
+                <span class="text-[10px] text-emerald-600 font-medium">Có tuyến thay thế</span>
+              </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Chart 1: Xu hướng chi phí logistics -->
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 class="font-bold text-slate-800 text-sm">Xu hướng biến động thị trường & logistics</h2>
+                    <p class="text-[11px] text-slate-400">Theo dõi chuỗi thời gian các yếu tố đầu vào then chốt</p>
+                  </div>
+                  <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg text-xs">
+                    <button class="px-2.5 py-1 bg-white shadow-sm font-semibold rounded text-slate-800">30 ngày</button>
+                    <button class="px-2.5 py-1 text-slate-600 hover:text-slate-800">90 ngày</button>
+                  </div>
+                </div>
+                <div class="h-64">
+                  <canvas id="trendChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 2: Cơ cấu chi phí logistics -->
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="mb-4">
+                  <h2 class="font-bold text-slate-800 text-sm">Cơ cấu tổng chi phí logistics</h2>
+                  <p class="text-[11px] text-slate-400">Tỷ trọng các cấu phần cấu thành giá vốn giao hàng</p>
+                </div>
+                <div class="h-56 relative flex items-center justify-center">
+                  <canvas id="costBreakdownChart"></canvas>
+                </div>
+                <div class="mt-2 text-center text-[11px] text-slate-500">
+                  Cước biển & Vận chuyển nội địa chiếm <b>46%</b> cơ cấu logistics
+                </div>
+              </div>
+            </div>
+
+            <!-- Market Alerts & Route Risk Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Biến động thị trường đáng chú ý -->
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-base">🚨</span>
+                    <h2 class="font-bold text-slate-800 text-sm">Biến động thị trường cần xử lý</h2>
+                  </div>
+                  <button onclick="app.navigate('market')" class="text-xs text-blue-600 font-semibold hover:underline">Tất cả chỉ số →</button>
+                </div>
+                <div class="space-y-3">
+                  <div class="p-3 rounded-lg border border-red-200 bg-red-50/60 flex items-start justify-between">
+                    <div class="space-y-1">
+                      <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-600"></span>
+                        <span class="font-bold text-red-900 text-xs">Cước tuyến Trung Quốc → Việt Nam tăng 20%</span>
+                        <span class="text-[10px] text-slate-500 font-mono">SCFI • 2 giờ trước</span>
+                      </div>
+                      <p class="text-[11px] text-slate-600">Áp dụng phụ thu khẩn cấp PSS do tắc nghẽn cảng trung chuyển. Ảnh hưởng trực tiếp lô sợi SH001.</p>
+                    </div>
+                    <button onclick="app.navigate('impact', { shipmentId: 'SH001', changePct: 20 })" class="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-[11px] font-semibold flex-shrink-0 shadow-sm ml-2">
+                      Phân tích tác động
+                    </button>
+                  </div>
+
+                  <div class="p-3 rounded-lg border border-amber-200 bg-amber-50/60 flex items-start justify-between">
+                    <div class="space-y-1">
+                      <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        <span class="font-bold text-amber-900 text-xs">Giá Cotton Cotlook A Index tăng 7.2%</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Cotlook • 1.5 giờ trước</span>
+                      </div>
+                      <p class="text-[11px] text-slate-600">Sản lượng dự báo tại Ấn Độ giảm nhẹ khiến giá giao ngay tăng, tác động các lô bông SH002 và SH006.</p>
+                    </div>
+                    <button onclick="app.navigate('impact', { shipmentId: 'SH002', changePct: 7.2 })" class="px-2.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-semibold flex-shrink-0 shadow-sm ml-2">
+                      Phân tích tác động
+                    </button>
+                  </div>
+
+                  <div class="p-3 rounded-lg border border-blue-200 bg-blue-50/60 flex items-start justify-between">
+                    <div class="space-y-1">
+                      <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                        <span class="font-bold text-blue-900 text-xs">Cảng Hải Phòng & Ninh Ba tăng thời gian chờ cầu bến</span>
+                        <span class="text-[10px] text-slate-500 font-mono">Báo cáo cảng • 5 giờ trước</span>
+                      </div>
+                      <p class="text-[11px] text-slate-600">Thời gian cập cảng bình quân kéo dài thêm 2-4 ngày do mật độ tàu dồn về cuối tuần.</p>
+                    </div>
+                    <button onclick="app.navigate('scenario')" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-semibold flex-shrink-0 shadow-sm ml-2">
+                      Mô phỏng trễ
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mức độ rủi ro theo tuyến hành trình -->
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-base">🗺️</span>
+                    <h2 class="font-bold text-slate-800 text-sm">Giám sát rủi ro tuyến cung ứng</h2>
+                  </div>
+                  <button onclick="app.navigate('risk')" class="text-xs text-blue-600 font-semibold hover:underline">Chi tiết rủi ro →</button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs">
+                    <thead>
+                      <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                        <th class="pb-2">Tuyến vận tải</th>
+                        <th class="pb-2">Thời gian (ngày)</th>
+                        <th class="pb-2">Khả năng chậm</th>
+                        <th class="pb-2">Mức rủi ro</th>
+                        <th class="pb-2 text-right">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                      <tr>
+                        <td class="py-2.5 font-semibold text-slate-800">Ninh Ba → Hải Phòng</td>
+                        <td>15 ngày</td>
+                        <td class="text-red-600 font-bold">78% (+7 ngày)</td>
+                        <td><span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[10px]">Cao</span></td>
+                        <td class="text-right">
+                          <button onclick="app.navigate('impact', { shipmentId: 'SH001' })" class="text-blue-600 hover:underline font-semibold">Phân tích</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-semibold text-slate-800">Mundra → Hải Phòng</td>
+                        <td>24 ngày</td>
+                        <td class="text-amber-600 font-bold">35% (+2 ngày)</td>
+                        <td><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">Trung bình</span></td>
+                        <td class="text-right">
+                          <button onclick="app.navigate('impact', { shipmentId: 'SH002' })" class="text-blue-600 hover:underline font-semibold">Phân tích</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-semibold text-slate-800">Santos → Cái Mép</td>
+                        <td>42 ngày</td>
+                        <td class="text-amber-600 font-bold">45% (+4 ngày)</td>
+                        <td><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">Trung bình</span></td>
+                        <td class="text-right">
+                          <button onclick="app.navigate('impact', { shipmentId: 'SH006' })" class="text-blue-600 hover:underline font-semibold">Phân tích</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-semibold text-slate-800">Quảng Châu → Lạng Sơn</td>
+                        <td>5 ngày</td>
+                        <td class="text-emerald-600 font-bold">12% (&lt; 1 ngày)</td>
+                        <td><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Thấp</span></td>
+                        <td class="text-right">
+                          <button onclick="app.navigate('impact', { shipmentId: 'SH003' })" class="text-blue-600 hover:underline font-semibold">Phân tích</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      initDashboardCharts() {
+        // Destroy existing if any
+        if (this.charts.trend) this.charts.trend.destroy();
+        if (this.charts.breakdown) this.charts.breakdown.destroy();
+
+        // 1. Line Trend Chart
+        const ctxTrend = document.getElementById('trendChart');
+        if (ctxTrend) {
+          this.charts.trend = new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+              labels: ['23/08', '28/08', '02/09', '07/09', '12/09', '17/09', '21/09'],
+              datasets: [
+                {
+                  label: 'Cước vận tải biển (USD/tấn)',
+                  data: [80, 80, 82, 85, 88, 92, 96],
+                  borderColor: '#dc2626',
+                  backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                  tension: 0.3,
+                  fill: true,
+                  borderWidth: 2
+                },
+                {
+                  label: 'Giá Cotton Index (Cent/lb)',
+                  data: [91.8, 92.5, 93.0, 94.2, 95.0, 96.8, 98.4],
+                  borderColor: '#f59e0b',
+                  tension: 0.3,
+                  borderWidth: 2
+                },
+                {
+                  label: 'Nhiên liệu Tàu VLSFO (x10 USD/tấn)',
+                  data: [64.5, 65.0, 65.2, 66.0, 66.8, 67.5, 68.0],
+                  borderColor: '#2563eb',
+                  tension: 0.3,
+                  borderWidth: 2
+                },
+                {
+                  label: 'Phí Cảng biển cơ sở (USD/cont)',
+                  data: [30, 30, 31, 31, 32, 33, 35],
+                  borderColor: '#64748b',
+                  tension: 0.3,
+                  borderDash: [4, 4],
+                  borderWidth: 1.5
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                tooltip: {
+                  callbacks: {
+                    afterBody: (context) => 'Nguồn: SCFI / Cotlook / Hiệp hội Cảng biển\nCập nhật: 21/09/2026'
+                  }
+                }
+              },
+              scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+              }
+            }
+          });
+        }
+
+        // 2. Donut Breakdown Chart
+        const ctxBreakdown = document.getElementById('costBreakdownChart');
+        if (ctxBreakdown) {
+          this.charts.breakdown = new Chart(ctxBreakdown, {
+            type: 'doughnut',
+            data: {
+              labels: ['Nguyên liệu mua', 'Cước vận tải biển', 'Vận tải nội địa', 'Cảng biển & lưu kho', 'Bảo hiểm & Phụ phí', 'Thuế & Thủ tục'],
+              datasets: [{
+                data: [54, 22, 9, 7, 5, 3],
+                backgroundColor: ['#1e293b', '#2563eb', '#38bdf8', '#f59e0b', '#a855f7', '#10b981'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } }
+              },
+              cutout: '65%'
+            }
+          });
+        }
+      },
+
+      // ==============================================================
+      // 2. PAGE: DỮ LIỆU THỊ TRƯỜNG
+      // ==============================================================
+      renderMarketPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Trung Tâm Dữ Liệu Thị Trường Logistics</h1>
+                <p class="text-xs text-slate-500 mt-1">Chuẩn hóa dữ liệu quốc tế về giá cước, nguyên liệu thô, nhiên liệu và biến động chuỗi cung ứng</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.refreshMarketData(true)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow flex items-center space-x-2">
+                  <span>🔄</span> <span>Đồng bộ & Làm mới dữ liệu</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Categories Tabs & Quick Filter -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center space-x-2 w-full sm:w-auto overflow-x-auto pb-1">
+                  <button class="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-medium text-xs">Tất cả chỉ số</button>
+                  <button class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs">Cước & Vận tải</button>
+                  <button class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs">Nguyên phụ liệu</button>
+                  <button class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs">Nhiên liệu & Phụ phí</button>
+                </div>
+                <div class="text-xs text-slate-400">
+                  Hiển thị <b>10 / 10</b> chỉ số tự động thu thập
+                </div>
+              </div>
+
+              <!-- Market Table -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-500 border-y border-slate-200 text-[11px]">
+                      <th class="py-3 px-3">Mã</th>
+                      <th class="py-3 px-3">Chỉ tiêu thị trường</th>
+                      <th class="py-3 px-3">Phân loại</th>
+                      <th class="py-3 px-3">Giá trị hiện hành</th>
+                      <th class="py-3 px-3">Biến động</th>
+                      <th class="py-3 px-3">Đơn vị</th>
+                      <th class="py-3 px-3">Nguồn dữ liệu</th>
+                      <th class="py-3 px-3">Thời điểm cập nhật</th>
+                      <th class="py-3 px-3 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-700">
+                    ${DB.marketIndicators.map(m => `
+                      <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-3 px-3 font-mono font-bold text-slate-400">${m.id}</td>
+                        <td class="py-3 px-3 font-semibold text-slate-900">${m.name}</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700">${m.category}</span></td>
+                        <td class="py-3 px-3 font-bold text-slate-900 font-mono">${m.value.toLocaleString('vi-VN')}</td>
+                        <td class="py-3 px-3">
+                          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold ${m.changePct > 0 ? 'text-red-700 bg-red-100' : m.changePct < 0 ? 'text-emerald-700 bg-emerald-100' : 'text-slate-600 bg-slate-100'}">
+                            ${m.changePct > 0 ? '↑ +' : m.changePct < 0 ? '↓ ' : ''}${m.changePct}%
+                          </span>
+                        </td>
+                        <td class="py-3 px-3 text-slate-500">${m.unit}</td>
+                        <td class="py-3 px-3 text-slate-600">${m.source}</td>
+                        <td class="py-3 px-3">
+                          <div class="text-[11px]">${m.updated}</div>
+                          ${m.isStale ? '<span class="text-[9px] text-amber-700 bg-amber-100 px-1 rounded font-semibold">⚠ Quá hạn cập nhật</span>' : `<span class="text-[10px] text-slate-400 font-mono">${m.freshness}</span>`}
+                        </td>
+                        <td class="py-3 px-3 text-right space-x-2">
+                          <button onclick="app.showDataTransparency('${m.name}', '${m.value}', '${m.unit}', '${m.source}', '${m.updated}', 'market')" class="text-blue-600 hover:underline font-semibold text-[11px]">Nguồn</button>
+                          <button onclick="app.navigate('impact', { changePct: ${m.changePct} })" class="px-2 py-1 bg-slate-100 hover:bg-blue-50 text-blue-700 font-semibold rounded text-[11px] border border-slate-200">Đo tác động</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Proactive Architecture Explanation Card -->
+            <div class="bg-blue-50/70 border border-blue-200 p-5 rounded-xl space-y-2">
+              <h2 class="font-bold text-blue-900 text-sm flex items-center space-x-2">
+                <span>🔄</span> <span>Cơ chế Dữ Liệu Chủ Động (Proactive Data Pipeline)</span>
+              </h2>
+              <p class="text-xs text-blue-800 leading-relaxed">
+                Hệ thống Logistics Arrow không chờ người dùng đặt câu hỏi mới đi cào dữ liệu bên ngoài. Nền tảng thiết lập bộ lịch trình thu thập định kỳ từ các nguồn xác thực (SCFI, Cotlook, Sàn London ICE, Hải quan Việt Nam). Dữ liệu sau khi thu thập được chuẩn hóa, đưa qua bộ lọc phát hiện đột biến (Anomaly Detection). Khi phát hiện biến động vượt ngưỡng cảnh báo (ví dụ cước tăng trên 15% hoặc trễ quá 3 ngày), hệ thống tự động kích hoạt tính toán tác động và gửi cảnh báo đến màn hình điều hành.
+              </p>
+            </div>
+          </div>
+        `;
+      },
+
+      // ==============================================================
+      // 3. PAGE: DỮ LIỆU DOANH NGHIỆP
+      // ==============================================================
+      renderCompanyPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Trung Tâm Dữ Liệu Doanh Nghiệp (Hub Dữ Liệu Nội Bộ)</h1>
+                <p class="text-xs text-slate-500 mt-1">Nhập liệu đơn hàng xuất khẩu, lô hàng nhập khẩu nguyên liệu và theo dõi tồn kho xưởng</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 font-medium flex items-center">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Dữ liệu được bảo mật nội bộ
+                </span>
+              </div>
+            </div>
+
+            <!-- Upload Area & Automated 5-Step Pipeline -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5">
+              <div class="border-b pb-3">
+                <h2 class="font-bold text-slate-800 text-sm">Nhập dữ liệu từ Excel / CSV / ERP Doanh nghiệp</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Tải lên bảng kê nguyên liệu, danh mục lô hàng hoặc danh sách đơn hàng để hệ thống tự động nhận diện</p>
+              </div>
+
+              <!-- Drag & Drop Zone -->
+              <div id="drop-zone" class="border-2 border-dashed border-blue-200 hover:border-blue-500 bg-blue-50/30 hover:bg-blue-50/60 rounded-xl p-8 text-center transition cursor-pointer" onclick="app.simulateFileUpload()">
+                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto text-2xl mb-3">
+                  📂
+                </div>
+                <div class="text-sm font-bold text-slate-800">Kéo thả tệp dữ liệu vào đây hoặc <span class="text-blue-600 underline">bấm để chọn tệp</span></div>
+                <div class="text-xs text-slate-400 mt-1">Hỗ trợ định dạng: .xlsx, .xls, .csv, .json (Dung lượng tối đa 25MB)</div>
+                <div class="mt-4 inline-flex items-center space-x-2 text-[11px] bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg shadow-sm">
+                  <span>💡</span> <span>Bấm trực tiếp để thử quy trình nhập mẫu: <b>Bang_ke_nhap_khau_nguyen_lieu_Q3.xlsx</b></span>
+                </div>
+              </div>
+
+              <!-- Pipeline Steps Indicator -->
+              <div class="grid grid-cols-1 md:grid-cols-5 gap-3 pt-2 text-xs">
+                <div class="p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <div class="font-bold text-[11px]">BƯỚC 1: Nhận diện tệp</div>
+                  <div class="text-[10px] text-emerald-700 mt-0.5">Đã xác thực định dạng bảng</div>
+                </div>
+                <div class="p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <div class="font-bold text-[11px]">BƯỚC 2: Xem trước dữ liệu</div>
+                  <div class="text-[10px] text-emerald-700 mt-0.5">128 dòng dữ liệu hợp lệ</div>
+                </div>
+                <div class="p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <div class="font-bold text-[11px]">BƯỚC 3: Khớp nối cột</div>
+                  <div class="text-[10px] text-emerald-700 mt-0.5">Tự động gắn mã 10/10 cột</div>
+                </div>
+                <div class="p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <div class="font-bold text-[11px]">BƯỚC 4: Kiểm tra tính hợp lệ</div>
+                  <div class="text-[10px] text-emerald-700 mt-0.5">0 lỗi thiếu, 0 số âm</div>
+                </div>
+                <div class="p-3 rounded-lg border border-blue-200 bg-blue-50 text-blue-900 font-semibold flex items-center justify-center">
+                  <span>ĐÃ NẠP VÀO HỆ THỐNG</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Company Data Tables with Tabs -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="border-b border-slate-200 bg-slate-50 px-6 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="font-bold text-slate-800 text-sm">Cơ Sở Dữ Liệu Doanh Nghiệp Đang Quản Lý</span>
+                </div>
+                <div class="flex space-x-2 text-xs">
+                  <button onclick="app.switchCompanyTab('shipments')" id="tab-btn-shipments" class="px-3 py-1.5 rounded-lg font-semibold bg-white text-blue-700 shadow-sm border border-slate-200">Lô hàng vận chuyển (10)</button>
+                  <button onclick="app.switchCompanyTab('orders')" id="tab-btn-orders" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100">Đơn hàng xuất khẩu (10)</button>
+                  <button onclick="app.switchCompanyTab('inventory')" id="tab-btn-inventory" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100">Tồn kho & Định mức (10)</button>
+                </div>
+              </div>
+
+              <!-- Table Content Area -->
+              <div id="company-table-container" class="p-5">
+                ${this.renderShipmentsTable()}
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      renderShipmentsTable() {
+        return `
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                  <th class="pb-2">Mã lô hàng</th>
+                  <th class="pb-2">Nguyên liệu</th>
+                  <th class="pb-2">Khối lượng</th>
+                  <th class="pb-2">Nhà cung cấp</th>
+                  <th class="pb-2">Tuyến đường</th>
+                  <th class="pb-2">Cước cơ sở</th>
+                  <th class="pb-2">Cước hiện tại</th>
+                  <th class="pb-2">Thời gian (ngày)</th>
+                  <th class="pb-2">Trạng thái</th>
+                  <th class="pb-2 text-right">Hành động</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                ${DB.shipments.map(s => `
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 font-bold font-mono text-blue-600">${s.id}</td>
+                    <td class="py-3 font-semibold text-slate-900">${s.material}</td>
+                    <td class="py-3 font-bold">${s.quantity} ${s.unit}</td>
+                    <td class="py-3 text-slate-600">${s.supplier}</td>
+                    <td class="py-3 text-slate-500">${s.route}</td>
+                    <td class="py-3 font-mono">${s.baseFreight} $</td>
+                    <td class="py-3 font-mono font-bold ${s.currentFreight > s.baseFreight ? 'text-red-600' : 'text-slate-900'}">${s.currentFreight} $</td>
+                    <td class="py-3">${s.transitDays} ngày ${s.currentDelay > 0 ? `<span class="text-red-500 font-bold">(+${s.currentDelay})</span>` : ''}</td>
+                    <td class="py-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${s.status.includes('Cảnh báo') ? 'bg-red-100 text-red-800' : s.status.includes('Theo dõi') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                        ${s.status}
+                      </span>
+                    </td>
+                    <td class="py-3 text-right">
+                      <button onclick="app.navigate('impact', { shipmentId: '${s.id}' })" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded font-semibold text-[11px] border border-blue-200">
+                        Phân tích
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      },
+
+      renderOrdersTable() {
+        return `
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                  <th class="pb-2">Mã đơn hàng</th>
+                  <th class="pb-2">Khách hàng quốc tế</th>
+                  <th class="pb-2">Sản phẩm may mặc</th>
+                  <th class="pb-2">Số lượng</th>
+                  <th class="pb-2">Bắt đầu sản xuất</th>
+                  <th class="pb-2">Hạn xuất xưởng</th>
+                  <th class="pb-2">Giá trị hợp đồng</th>
+                  <th class="pb-2">Tình trạng vật tư</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                ${DB.orders.map(o => `
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 font-bold font-mono text-slate-900">${o.id}</td>
+                    <td class="py-3 font-semibold text-slate-800">${o.customer}</td>
+                    <td class="py-3">${o.product}</td>
+                    <td class="py-3 font-bold">${o.quantity.toLocaleString('vi-VN')} ${o.unit}</td>
+                    <td class="py-3 font-mono text-slate-500">${o.prodStart}</td>
+                    <td class="py-3 font-mono text-slate-500">${o.exportDeadline}</td>
+                    <td class="py-3 font-bold text-slate-900">${(o.revenueVnd / 1000000000).toFixed(2)} tỷ VNĐ</td>
+                    <td class="py-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${o.status.includes('Nguy cơ') ? 'bg-red-100 text-red-800' : o.status.includes('Theo dõi') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                        ${o.status}
+                      </span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      },
+
+      renderInventoryTable() {
+        return `
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                  <th class="pb-2">Tên nguyên phụ liệu</th>
+                  <th class="pb-2">Tồn kho hiện hữu</th>
+                  <th class="pb-2">Tiêu hao / ngày</th>
+                  <th class="pb-2">Định mức an toàn</th>
+                  <th class="pb-2">Số ngày đáp ứng</th>
+                  <th class="pb-2">Đánh giá an toàn</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                ${DB.inventory.map(i => `
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 font-semibold text-slate-900">${i.material}</td>
+                    <td class="py-3 font-bold text-blue-700">${i.stockTons} tấn</td>
+                    <td class="py-3">${i.dailyConsumption} tấn/ngày</td>
+                    <td class="py-3 text-slate-500">${i.safetyStockTons} tấn</td>
+                    <td class="py-3 font-bold font-mono ${i.coverageDays <= 12 ? 'text-red-600' : 'text-slate-800'}">${i.coverageDays} ngày</td>
+                    <td class="py-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${i.status.includes('Cảnh báo') ? 'bg-red-100 text-red-800' : i.status.includes('Theo dõi') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                        ${i.status}
+                      </span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      },
+
+      switchCompanyTab(tab) {
+        document.querySelectorAll('[id^="tab-btn-"]').forEach(b => {
+          b.className = 'px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100';
+        });
+        const currentBtn = document.getElementById(`tab-btn-${tab}`);
+        if (currentBtn) currentBtn.className = 'px-3 py-1.5 rounded-lg font-semibold bg-white text-blue-700 shadow-sm border border-slate-200';
+
+        const container = document.getElementById('company-table-container');
+        if (tab === 'shipments') container.innerHTML = this.renderShipmentsTable();
+        else if (tab === 'orders') container.innerHTML = this.renderOrdersTable();
+        else if (tab === 'inventory') container.innerHTML = this.renderInventoryTable();
+      },
+
+      simulateFileUpload() {
+        this.showToast('Hệ thống đang chuẩn hóa cấu trúc tệp dữ liệu...', '⏳');
+        setTimeout(() => {
+          this.showToast('Đã nạp thành công 128 bản ghi dữ liệu logistics doanh nghiệp!', '✅');
+          this.navigate('company');
+        }, 800);
+      },
+
+      // ==============================================================
+      // 4. PAGE: PHÂN TÍCH TÁC ĐỘNG
+      // ==============================================================
+      renderImpactPage() {
+        const shipment = DB.shipments.find(s => s.id === this.selectedShipmentForImpact) || DB.shipments[0];
+        const changePct = Number(this.impactCustomChangePct) || 20;
+
+        // Tính toán thực tế thông qua calculationService
+        const baseFreight = shipment.baseFreight;
+        const newFreight = Number((baseFreight * (1 + changePct / 100)).toFixed(2));
+        const exchangeRate = DB.settings.usdExchangeRate;
+        const impact = calculationService.calculateFreightImpact(shipment.quantity, baseFreight, newFreight, exchangeRate);
+
+        // Đánh giá tác động giá thành sản phẩm may mặc (tỷ trọng logistics ~ 8% trong tổng giá thành)
+        const costIncreasePerTonVnd = impact.diffVndPerTon;
+        const estimatedImpactOnProductCostPct = Number((costIncreasePerTonVnd / 50000000 * 100).toFixed(2)); // Giả định giá trị sợi 50 triệu/tấn
+
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Mô Đun Phân Tích Tác Động Logistics</h1>
+                <p class="text-xs text-slate-500 mt-1">Biến một biến động thị trường bên ngoài thành số tiền và rủi ro định lượng trực tiếp lên doanh nghiệp</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.navigate('scenario')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow flex items-center space-x-2">
+                  <span>🎯</span> <span>Chuyển sang Mô phỏng Kịch bản</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Selector & Controls -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">1. Chọn lô hàng chịu tác động:</label>
+                <select onchange="app.selectedShipmentForImpact = this.value; app.navigate('impact')" class="w-full text-xs border border-slate-300 rounded-lg p-2.5 bg-slate-50 font-medium focus:bg-white">
+                  ${DB.shipments.map(s => `
+                    <option value="${s.id}" ${s.id === shipment.id ? 'selected' : ''}>${s.id} - ${s.material} (${s.quantity} tấn, ${s.route})</option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">2. Yếu tố thị trường biến động:</label>
+                <select class="w-full text-xs border border-slate-300 rounded-lg p-2.5 bg-slate-50 font-medium">
+                  <option selected>Cước vận tải biển container (Ocean Freight)</option>
+                  <option>Giá bông Cotton Cotlook Index</option>
+                  <option>Nhiên liệu tàu biển VLSFO</option>
+                  <option>Tỷ giá USD / VND</option>
+                  <option>Phụ phí tắc nghẽn cảng biển</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">3. Mức độ biến động: <span class="text-red-600 font-bold">${changePct > 0 ? '+' : ''}${changePct}%</span></label>
+                <div class="flex items-center space-x-3 mt-2">
+                  <input type="range" min="-20" max="60" step="5" value="${changePct}" oninput="app.impactCustomChangePct = this.value; app.navigate('impact')" class="w-full accent-blue-600" />
+                  <span class="text-xs font-mono font-bold w-12 text-right">${changePct}%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mathematical Output Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-blue-600">
+                <span class="text-slate-400 text-[11px] block">Chi phí logistics phát sinh thêm</span>
+                <div class="text-xl font-bold text-slate-900 mt-1 font-mono">
+                  ${impact.totalDiffVnd >= 0 ? '+' : ''}${impact.totalDiffVnd.toLocaleString('vi-VN')} <span class="text-xs font-normal text-slate-500">VNĐ</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">
+                  Tương đương <b>${impact.totalDiffUsd >= 0 ? '+' : ''}${impact.totalDiffUsd.toLocaleString('en-US')} USD</b>
+                </div>
+              </div>
+
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+                <span class="text-slate-400 text-[11px] block">Chi phí tăng thêm trên mỗi tấn</span>
+                <div class="text-xl font-bold text-amber-700 mt-1 font-mono">
+                  ${impact.diffVndPerTon >= 0 ? '+' : ''}${impact.diffVndPerTon.toLocaleString('vi-VN')} <span class="text-xs font-normal text-slate-500">VNĐ/tấn</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">
+                  Từ ${baseFreight} $ → <b>${newFreight} $/tấn</b>
+                </div>
+              </div>
+
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500">
+                <span class="text-slate-400 text-[11px] block">Tác động ước tính lên giá vốn sản phẩm</span>
+                <div class="text-xl font-bold text-purple-700 mt-1 font-mono">
+                  +${estimatedImpactOnProductCostPct}%
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">
+                  Đơn hàng liên đới: <b>${shipment.orderId}</b>
+                </div>
+              </div>
+
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-red-500">
+                <span class="text-slate-400 text-[11px] block">Rủi ro tiến độ sản xuất</span>
+                <div class="text-xl font-bold text-red-600 mt-1 font-mono">
+                  ${shipment.currentDelay > 0 ? `Chậm ${shipment.currentDelay} ngày` : 'Trong kế hoạch'}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">
+                  Tồn kho xưởng: <b>12 ngày tiêu thụ</b>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mathematical Formula Execution Box -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">📐</span>
+                  <h2 class="font-bold text-slate-800 text-sm">Công thức tính toán minh bạch (Calculation Engine)</h2>
+                </div>
+                <span class="text-xs text-purple-700 bg-purple-50 px-2.5 py-1 rounded font-mono font-semibold border border-purple-200">
+                  Thuật toán độc lập không giả lập số liệu
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                  <div class="font-bold text-slate-700 font-sans text-xs">Biến động cước vận tải biển:</div>
+                  <div class="text-blue-700">Δ C_freight_VND = Khối lượng × (Cước mới - Cước gốc) × Tỷ giá</div>
+                  <div class="text-slate-600">= ${shipment.quantity} tấn × (${newFreight} - ${baseFreight} USD) × ${exchangeRate.toLocaleString('vi-VN')} đ</div>
+                  <div class="text-slate-900 font-bold text-sm pt-1 border-t border-slate-200">= ${impact.totalDiffVnd.toLocaleString('vi-VN')} VNĐ</div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                  <div class="font-bold text-slate-700 font-sans text-xs">Biến động chi phí trên đơn vị tấn:</div>
+                  <div class="text-blue-700">Δ C_unit = Δ C_freight_VND / Khối lượng</div>
+                  <div class="text-slate-600">= ${impact.totalDiffVnd.toLocaleString('vi-VN')} / ${shipment.quantity} tấn</div>
+                  <div class="text-slate-900 font-bold text-sm pt-1 border-t border-slate-200">= ${impact.diffVndPerTon.toLocaleString('vi-VN')} VNĐ/tấn</div>
+                </div>
+              </div>
+
+              <div class="pt-2 flex items-center justify-between">
+                <div class="text-xs text-slate-500">
+                  Đơn hàng chịu rủi ro trực tiếp: <b>DH-2026-88 (Uniqlo - 120.000 áo khoác)</b>, khởi công 01/10/2026.
+                </div>
+                <button onclick="app.showDataTransparency('Cước vận tải biển', '${newFreight}', 'USD/tấn', 'Hệ thống nhập khẩu & Bảng giá SCFI', '21/09/2026', 'calculated')" class="text-xs text-blue-600 hover:underline font-semibold">
+                  Xem nguồn dữ liệu tính toán →
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      // ==============================================================
+      // 5. PAGE: CẢNH BÁO RỦI RO
+      // ==============================================================
+      renderRiskPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Trung Tâm Giám Sát & Cảnh Báo Rủi Ro Logistics</h1>
+                <p class="text-xs text-slate-500 mt-1">Phát hiện sớm các nút thắt tuyến vận tải, đứt gãy cảng biển và rủi ro thiếu hụt nguyên vật liệu</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs bg-red-100 text-red-800 font-bold px-3 py-1.5 rounded-lg border border-red-200">
+                  5 Rủi ro chuỗi cung ứng đang hoạt động
+                </span>
+              </div>
+            </div>
+
+            <!-- Risk Cards List -->
+            <div class="space-y-4">
+              ${DB.riskEvents.map(r => `
+                <div class="bg-white p-5 rounded-xl border ${r.level === 'Cao' ? 'border-red-300 bg-red-50/20' : 'border-slate-200'} shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div class="space-y-2 flex-1">
+                    <div class="flex items-center space-x-3">
+                      <span class="px-2.5 py-0.5 rounded text-[11px] font-bold ${r.level === 'Cao' ? 'bg-red-600 text-white' : 'bg-amber-500 text-white'}">
+                        MỨC ĐỘ ${r.level.toUpperCase()}
+                      </span>
+                      <h2 class="font-bold text-slate-900 text-sm">${r.route} - ${r.category}</h2>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${r.summary}</p>
+                    <div class="flex flex-wrap items-center gap-4 text-xs pt-1">
+                      <span class="text-slate-500">Chậm trễ dự kiến: <b class="text-red-600 font-bold">+${r.delayPotential} ngày</b></span>
+                      <span class="text-slate-500">Chi phí phát sinh ước tính: <b class="text-slate-800 font-bold">+${r.costImpactMio} triệu VNĐ</b></span>
+                      <span class="text-slate-500">Đơn hàng bị ảnh hưởng: <b class="text-slate-800 font-bold">${r.affectedOrders} đơn</b></span>
+                      <span class="text-slate-500">Tồn kho xưởng đáp ứng: <b class="${r.inventoryCoverageDays <= 12 ? 'text-red-600 font-bold' : 'text-slate-800'}">${r.inventoryCoverageDays} ngày</b></span>
+                    </div>
+                  </div>
+
+                  <div class="flex lg:flex-col gap-2 flex-shrink-0">
+                    <button onclick="app.navigate('scenario')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-semibold shadow-sm text-center">
+                      Mô phỏng kịch bản
+                    </button>
+                    <button onclick="app.navigate('impact', { shipmentId: 'SH001' })" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-semibold text-center">
+                      Phân tích chi phí
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Risk Methodology Note -->
+            <div class="bg-slate-100 p-4 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+              <span class="font-bold text-slate-800 block text-[11px]">Nguyên tắc xếp hạng rủi ro (Risk Scoring Methodology):</span>
+              <p>Mức độ rủi ro được tính toán dựa trên tích số giữa Xác suất xảy ra (P) và Mức độ ảnh hưởng (I): R = P × I. Trong điều kiện dữ liệu lịch sử chưa đủ dày đặc đối với một số sự kiện bất thường, hệ thống ghi rõ: <i>"Đánh giá rủi ro dựa trên kịch bản giả định có căn cứ từ tần suất chậm trễ thực tế tại cảng."</i></p>
+            </div>
+          </div>
+        `;
+      },
+
+      // ==============================================================
+      // 6. PAGE: MÔ PHỎNG KỊCH BẢN (SCENARIO SIMULATOR)
+      // ==============================================================
+      renderScenarioPage() {
+        // Tính toán kịch bản gián đoạn: Demo Case 2
+        // Transit 15 -> 22 days (+7 days). DailyConsumption = 8 tons. Inventory = 12 days (96 tons). Required = 100 tons.
+        const stockTons = 96;
+        const dailyConsumption = 8.0;
+        const regularTransit = 15;
+        const delayDays = Number(this.scenarioInput.delayDays) || 7;
+        const requiredTons = 100;
+
+        const simResult = calculationService.calculateInventoryShortage(stockTons, dailyConsumption, regularTransit, delayDays, requiredTons);
+
+        // Chi phí cước phát sinh
+        const baseFreight = 80;
+        const newFreight = Number((baseFreight * (1 + this.scenarioInput.freightChangePct / 100)).toFixed(1));
+        const costDiffVnd = (newFreight - baseFreight) * requiredTons * DB.settings.usdExchangeRate;
+
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Mô Phỏng Kịch Bản Gián Đoạn Chuỗi Cung Ứng</h1>
+                <p class="text-xs text-slate-500 mt-1">Đánh giá khả năng chống chịu của nhà máy khi thời gian vận tải kéo dài và cước phí tăng sốc</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.navigate('decision')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow flex items-center space-x-2">
+                  <span>⚖️</span> <span>So sánh các phương án ứng phó</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Scenario Configuration Inputs -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">🎛️</span>
+                  <h2 class="font-bold text-slate-800 text-sm">Thiết lập tham số kịch bản: "${this.scenarioInput.name}"</h2>
+                </div>
+                <span class="text-[11px] font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">
+                  Lô khảo sát: Sợi Polyester SH001 (100 tấn)
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Thời gian trễ hành trình (ngày): <span class="text-red-600 font-bold">+${this.scenarioInput.delayDays} ngày</span></label>
+                  <input type="range" min="0" max="15" step="1" value="${this.scenarioInput.delayDays}" oninput="app.scenarioInput.delayDays = Number(this.value); app.navigate('scenario')" class="w-full accent-blue-600 mt-2" />
+                  <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <span>Đúng giờ (0)</span>
+                    <span>Hiện tại (+7 ngày)</span>
+                    <span>Trầm trọng (+15 ngày)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Mức tăng cước biển (%): <span class="text-red-600 font-bold">+${this.scenarioInput.freightChangePct}%</span></label>
+                  <input type="range" min="0" max="50" step="5" value="${this.scenarioInput.freightChangePct}" oninput="app.scenarioInput.freightChangePct = Number(this.value); app.navigate('scenario')" class="w-full accent-blue-600 mt-2" />
+                  <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <span>0% (80 $/tấn)</span>
+                    <span>+20% (96 $/tấn)</span>
+                    <span>+50% (120 $/tấn)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Mức tiêu thụ nhà máy (tấn/ngày):</label>
+                  <input type="number" readonly value="8.0" class="w-full border border-slate-300 rounded-lg p-2 bg-slate-100 font-mono font-bold mt-1" />
+                  <span class="text-[10px] text-slate-400 mt-1 block">Tồn kho hiện có: 96 tấn (đủ dùng 12 ngày)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparison Matrix: Cơ sở vs Kịch bản mô phỏng -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h2 class="font-bold text-slate-800 text-sm">Bảng So Sánh Chỉ Số: Trạng Thái Cơ Sở vs Kịch Bản Gián Đoạn</h2>
+                <span class="text-xs text-slate-500 font-mono">Động cơ tính toán độc lập thực thi</span>
+              </div>
+
+              <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 text-[11px]">
+                      <th class="py-3 px-4">Chỉ số đánh giá</th>
+                      <th class="py-3 px-4">Trạng thái cơ sở</th>
+                      <th class="py-3 px-4">Kịch bản gián đoạn</th>
+                      <th class="py-3 px-4">Mức độ biến động</th>
+                      <th class="py-3 px-4">Đánh giá tác động</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-700">
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Thời gian hành trình đường biển</td>
+                      <td class="py-3 px-4 font-mono">${regularTransit} ngày</td>
+                      <td class="py-3 px-4 font-mono font-bold text-red-600">${regularTransit + delayDays} ngày</td>
+                      <td class="py-3 px-4 font-bold text-red-600">+${delayDays} ngày</td>
+                      <td class="py-3 px-4 text-red-600 font-medium">Vượt ngưỡng tồn kho an toàn (12 ngày)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Cước vận tải biển đơn vị</td>
+                      <td class="py-3 px-4 font-mono">${baseFreight} USD/tấn</td>
+                      <td class="py-3 px-4 font-mono font-bold text-slate-900">${newFreight} USD/tấn</td>
+                      <td class="py-3 px-4 font-bold text-red-600">+${this.scenarioInput.freightChangePct}%</td>
+                      <td class="py-3 px-4 text-slate-600">Tăng thêm ${(newFreight - baseFreight)} USD/tấn</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Tổng chi phí cước lô hàng (100 tấn)</td>
+                      <td class="py-3 px-4 font-mono">${(baseFreight * requiredTons * DB.settings.usdExchangeRate).toLocaleString('vi-VN')} đ</td>
+                      <td class="py-3 px-4 font-mono font-bold text-slate-900">${(newFreight * requiredTons * DB.settings.usdExchangeRate).toLocaleString('vi-VN')} đ</td>
+                      <td class="py-3 px-4 font-bold text-red-600">+${costDiffVnd.toLocaleString('vi-VN')} đ</td>
+                      <td class="py-3 px-4 text-slate-600">Đơn hàng DH-2026-88 bị đội giá</td>
+                    </tr>
+                    <tr class="bg-red-50/50">
+                      <td class="py-3 px-4 font-bold text-red-900">Thiếu hụt nguyên liệu xưởng (Shortage)</td>
+                      <td class="py-3 px-4 font-mono text-emerald-700 font-bold">0 tấn</td>
+                      <td class="py-3 px-4 font-mono font-bold text-red-700 text-sm">${simResult.shortageTons} tấn</td>
+                      <td class="py-3 px-4 font-bold text-red-700">Nguy cơ gián đoạn dây chuyền</td>
+                      <td class="py-3 px-4 font-semibold text-red-800">
+                        ${simResult.shortageTons > 0 ? `Thiếu hụt nguyên liệu để duy trì sản xuất liên tục` : `Tồn kho vẫn đủ`}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Mathematical Proof of Shortage -->
+            <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl text-xs space-y-2">
+              <div class="flex items-center space-x-2 text-amber-900 font-bold text-sm">
+                <span>⚠️</span> <span>Hệ thống phát hiện nguy cơ dừng chuyền may:</span>
+              </div>
+              <p class="text-amber-800 leading-relaxed font-mono">
+                Tồn kho hiện hữu: 96 tấn ÷ 8 tấn/ngày = <b>12 ngày tiêu thụ</b>.<br/>
+                Thời gian chờ nhận hàng thực tế: 15 ngày cơ sở + 7 ngày trễ = <b>22 ngày</b>.<br/>
+                Tổng nguyên liệu cần cho lô đơn hàng: <b>100 tấn</b>.<br/>
+                → <b>Thiếu hụt nguyên liệu thực tế = 100 - 96 = 4 tấn</b> (Tương đương xưởng phải dừng chuyền chờ hàng).
+              </p>
+            </div>
+          </div>
+        `;
+      },
+
+      // ==============================================================
+      // 7. PAGE: SO SÁNH PHƯƠNG ÁN (DECISION LAB)
+      // ==============================================================
+      renderDecisionLab() {
+        // 3 Phương án ứng phó cho lô hàng 100 tấn
+        // Phương án A: Tuyến hiện tại (Ninh Ba -> HP), tiếp tục đợi (Rẻ nhất, trễ nặng)
+        // Phương án B: Tuyến thay thế (Đường bộ Quảng Châu - Hữu Nghị - HP) (Cước cao hơn, cực nhanh)
+        // Phương án C: Mua nhà cung cấp Ấn Độ Mundra (Cước vừa phải, thời gian trung bình)
+
+        const optA = {
+          id: 'A',
+          name: 'Phương án A (Giữ tuyến hiện tại)',
+          desc: 'Tiếp tục chờ tàu từ Ninh Ba - Hải Phòng',
+          supplier: 'Chiết Giang Fiber Corp',
+          route: 'Ninh Ba - Hải Phòng (Đường biển)',
+          costVnd: 2400000000,
+          costPerKg: 24000,
+          freightUsdPerTon: 96,
+          transitDays: 22, // 15 + 7
+          onTimeProb: 35,
+          riskLevel: 'Cao',
+          riskScoreNum: 75,
+          recoveryDays: 9,
+          coverageFeasible: false,
+          feasibilityReason: 'Thời gian giao hàng 22 ngày vượt quá khả năng bù đắp của tồn kho (12 ngày), gây dừng chuyền 4 tấn.',
+          scores: { costScore: 90, timeScore: 30, riskScore: 35, serviceScore: 50, flexibilityScore: 40 }
+        };
+
+        const optB = {
+          id: 'B',
+          name: 'Phương án B (Chuyển đường bộ khẩn cấp)',
+          desc: 'Điều chuyển nguồn hàng qua Cửa khẩu Hữu Nghị - Lạng Sơn',
+          supplier: 'Chiết Giang Fiber Corp',
+          route: 'Ninh Ba - Lạng Sơn - Hải Phòng (Đường bộ)',
+          costVnd: 2625000000, // Cước 105 USD/tấn
+          costPerKg: 26250,
+          freightUsdPerTon: 105,
+          transitDays: 6,
+          onTimeProb: 92,
+          riskLevel: 'Thấp',
+          riskScoreNum: 25,
+          recoveryDays: 3,
+          coverageFeasible: true,
+          feasibilityReason: 'Thời gian 6 ngày nằm gọn trong 12 ngày tồn kho an toàn, đảm bảo dây chuyền hoạt động thông suốt.',
+          scores: { costScore: 70, timeScore: 95, riskScore: 85, serviceScore: 90, flexibilityScore: 80 }
+        };
+
+        const optC = {
+          id: 'C',
+          name: 'Phương án C (Nguồn cung dự phòng Ấn Độ)',
+          desc: 'Mua bổ sung 100 tấn từ Gujarat Mills chuyển về Hải Phòng',
+          supplier: 'Gujarat Cotton Mills',
+          route: 'Mundra - Hải Phòng (Đường biển)',
+          costVnd: 2550000000,
+          costPerKg: 25500,
+          freightUsdPerTon: 102,
+          transitDays: 16,
+          onTimeProb: 75,
+          riskLevel: 'Trung bình',
+          riskScoreNum: 50,
+          recoveryDays: 6,
+          coverageFeasible: false,
+          feasibilityReason: 'Thời gian 16 ngày vẫn trễ hơn 4 ngày so với mức tồn kho 12 ngày hiện tại.',
+          scores: { costScore: 78, timeScore: 60, riskScore: 65, serviceScore: 70, flexibilityScore: 60 }
+        };
+
+        const options = [optA, optB, optC];
+        options.forEach(opt => {
+          opt.totalScore = calculationService.calculateWeightedScore(opt.scores, this.decisionWeights);
+        });
+
+        // Tìm phương án điểm cao nhất theo trọng số hiện hành
+        const highestScoreOpt = [...options].sort((a, b) => b.totalScore - a.totalScore)[0];
+
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Phòng Thí Nghiệm Ra Quyết Định Logistics (Decision Lab)</h1>
+                <p class="text-xs text-slate-500 mt-1">So sánh định lượng đa tiêu chí, phân tích đánh đổi (Trade-off) và kiểm tra tính khả thi điều kiện</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.navigate('assistant')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow flex items-center space-x-2">
+                  <span>🤖</span> <span>Xem giải thích chuyên sâu của trợ lý</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Multi-Criteria Sliders -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex items-center justify-between border-b pb-2">
+                <div>
+                  <h2 class="font-bold text-slate-800 text-sm">Thiết lập bộ trọng số ưu tiên ra quyết định</h2>
+                  <p class="text-[11px] text-slate-400">Điều chỉnh mức độ ưu tiên theo chiến lược từng giai đoạn của doanh nghiệp (Tổng = 100%)</p>
+                </div>
+                <button onclick="app.resetDefaultWeights()" class="text-xs text-blue-600 font-semibold hover:underline">Khôi phục mặc định</button>
+              </div>
+
+              <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div class="flex justify-between font-bold text-slate-700">
+                    <span>Chi phí (Cost):</span>
+                    <span class="text-blue-600 font-mono">${this.decisionWeights.cost}%</span>
+                  </div>
+                  <input type="range" min="10" max="60" value="${this.decisionWeights.cost}" oninput="app.updateWeight('cost', this.value)" class="w-full accent-blue-600 mt-2" />
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div class="flex justify-between font-bold text-slate-700">
+                    <span>Thời gian (Time):</span>
+                    <span class="text-blue-600 font-mono">${this.decisionWeights.time}%</span>
+                  </div>
+                  <input type="range" min="10" max="60" value="${this.decisionWeights.time}" oninput="app.updateWeight('time', this.value)" class="w-full accent-blue-600 mt-2" />
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div class="flex justify-between font-bold text-slate-700">
+                    <span>Rủi ro (Risk):</span>
+                    <span class="text-blue-600 font-mono">${this.decisionWeights.risk}%</span>
+                  </div>
+                  <input type="range" min="10" max="40" value="${this.decisionWeights.risk}" oninput="app.updateWeight('risk', this.value)" class="w-full accent-blue-600 mt-2" />
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div class="flex justify-between font-bold text-slate-700">
+                    <span>Độ tin cậy (Service):</span>
+                    <span class="text-blue-600 font-mono">${this.decisionWeights.service}%</span>
+                  </div>
+                  <input type="range" min="5" max="30" value="${this.decisionWeights.service}" oninput="app.updateWeight('service', this.value)" class="w-full accent-blue-600 mt-2" />
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div class="flex justify-between font-bold text-slate-700">
+                    <span>Độ linh hoạt (Flexibility):</span>
+                    <span class="text-blue-600 font-mono">${this.decisionWeights.flexibility}%</span>
+                  </div>
+                  <input type="range" min="0" max="20" value="${this.decisionWeights.flexibility}" oninput="app.updateWeight('flexibility', this.value)" class="w-full accent-blue-600 mt-2" />
+                </div>
+              </div>
+
+              <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-lg text-xs text-blue-900 flex items-center justify-between">
+                <span>
+                  Đánh giá định lượng: <b>${highestScoreOpt.name}</b> đạt tổng điểm cao nhất (<b>${highestScoreOpt.totalScore} / 100</b>) theo bộ trọng số hiện tại.
+                </span>
+                <span class="text-[11px] text-slate-500 italic">Hệ thống không quyết định thay người quản trị</span>
+              </div>
+            </div>
+
+            <!-- Comparison Table & Feasibility Gate -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h2 class="font-bold text-slate-800 text-sm">Bảng So Sánh Chi Tiết Các Phương Án Ứng Phó</h2>
+                <span class="text-xs font-semibold text-slate-500">Khối lượng khảo sát: 100 tấn Sợi Polyester</span>
+              </div>
+
+              <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 text-[11px]">
+                      <th class="py-3 px-4">Tiêu chí đánh giá</th>
+                      <th class="py-3 px-4">Phương án A (Tuyến hiện tại)</th>
+                      <th class="py-3 px-4">Phương án B (Đường bộ khẩn cấp)</th>
+                      <th class="py-3 px-4">Phương án C (Nguồn phụ Ấn Độ)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-700">
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Tuyến vận tải & Phương thức</td>
+                      <td class="py-3 px-4">${optA.route}</td>
+                      <td class="py-3 px-4">${optB.route}</td>
+                      <td class="py-3 px-4">${optC.route}</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Tổng chi phí vận chuyển</td>
+                      <td class="py-3 px-4 font-bold font-mono text-emerald-700">${optA.costVnd.toLocaleString('vi-VN')} đ (96 $/tấn)</td>
+                      <td class="py-3 px-4 font-bold font-mono text-slate-800">${optB.costVnd.toLocaleString('vi-VN')} đ (105 $/tấn)</td>
+                      <td class="py-3 px-4 font-bold font-mono text-slate-800">${optC.costVnd.toLocaleString('vi-VN')} đ (102 $/tấn)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Chi phí trên mỗi kg nguyên liệu</td>
+                      <td class="py-3 px-4 font-mono font-bold">${optA.costPerKg.toLocaleString('vi-VN')} đ/kg</td>
+                      <td class="py-3 px-4 font-mono font-bold">${optB.costPerKg.toLocaleString('vi-VN')} đ/kg</td>
+                      <td class="py-3 px-4 font-mono font-bold">${optC.costPerKg.toLocaleString('vi-VN')} đ/kg</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Thời gian hành trình thực tế</td>
+                      <td class="py-3 px-4 font-bold text-red-600">${optA.transitDays} ngày (chậm 7 ngày)</td>
+                      <td class="py-3 px-4 font-bold text-emerald-600">${optB.transitDays} ngày (nhanh nhất)</td>
+                      <td class="py-3 px-4 font-bold text-slate-700">${optC.transitDays} ngày</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Tỷ lệ đúng hạn dự kiến</td>
+                      <td class="py-3 px-4 text-red-600 font-bold">${optA.onTimeProb}%</td>
+                      <td class="py-3 px-4 text-emerald-600 font-bold">${optB.onTimeProb}%</td>
+                      <td class="py-3 px-4 text-slate-700 font-bold">${optC.onTimeProb}%</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 font-semibold text-slate-900">Mức độ rủi ro chuỗi cung ứng</td>
+                      <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[10px]">Rủi ro Cao</span></td>
+                      <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Rủi ro Thấp</span></td>
+                      <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">Trung bình</span></td>
+                    </tr>
+                    <tr class="bg-slate-50 font-bold">
+                      <td class="py-3 px-4 text-slate-900">Kiểm tra tính khả thi điều kiện</td>
+                      <td class="py-3 px-4 text-red-600">
+                        ❌ Không khả thi tiến độ<br/>
+                        <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${optA.feasibilityReason}</span>
+                      </td>
+                      <td class="py-3 px-4 text-emerald-600">
+                        ✅ Hoàn toàn khả thi<br/>
+                        <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${optB.feasibilityReason}</span>
+                      </td>
+                      <td class="py-3 px-4 text-amber-600">
+                        ⚠️ Khả thi có điều kiện<br/>
+                        <span class="text-[10px] text-slate-500 font-normal block mt-0.5">${optC.feasibilityReason}</span>
+                      </td>
+                    </tr>
+                    <tr class="bg-blue-50/50">
+                      <td class="py-3 px-4 font-bold text-blue-900">Tổng điểm theo trọng số (${highestScoreOpt.name.split(' ')[0]})</td>
+                      <td class="py-3 px-4 font-mono font-bold text-base text-slate-800">${optA.totalScore} / 100</td>
+                      <td class="py-3 px-4 font-mono font-bold text-base text-blue-600">${optB.totalScore} / 100</td>
+                      <td class="py-3 px-4 font-mono font-bold text-base text-slate-800">${optC.totalScore} / 100</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Trade-off Scatter Chart Row -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+              <div>
+                <h2 class="font-bold text-slate-800 text-sm">Biểu Đồ Phân Tích Đánh Đổi (Trade-off: Chi phí - Rủi ro - Thời gian)</h2>
+                <p class="text-[11px] text-slate-400">Trục hoành: Tổng chi phí (Triệu VNĐ) • Trục tung: Điểm rủi ro • Độ lớn bóng tròn: Số ngày hành trình</p>
+              </div>
+              <div class="h-64">
+                <canvas id="tradeoffChart"></canvas>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      initDecisionChart() {
+        if (this.charts.tradeoff) this.charts.tradeoff.destroy();
+        const ctx = document.getElementById('tradeoffChart');
+        if (!ctx) return;
+
+        this.charts.tradeoff = new Chart(ctx, {
+          type: 'bubble',
+          data: {
+            datasets: [
+              {
+                label: 'Phương án A (Tuyến hiện tại - Rẻ nhưng trễ)',
+                data: [{ x: 2400, y: 75, r: 18 }],
+                backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                borderColor: '#dc2626'
+              },
+              {
+                label: 'Phương án B (Đường bộ - Cước cao hơn, cực nhanh, an toàn)',
+                data: [{ x: 2625, y: 25, r: 8 }],
+                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                borderColor: '#059669'
+              },
+              {
+                label: 'Phương án C (Nguồn phụ Ấn Độ - Cân bằng)',
+                data: [{ x: 2550, y: 50, r: 14 }],
+                backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                borderColor: '#d97706'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const raw = ctx.raw;
+                    return `Chi phí: ${raw.x} triệu VNĐ | Điểm rủi ro: ${raw.y}/100 | Thời gian: ${raw.r} ngày`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Tổng chi phí vận chuyển (Triệu VNĐ)', font: { size: 11 } },
+                min: 2300,
+                max: 2750,
+                grid: { color: '#f1f5f9' }
+              },
+              y: {
+                title: { display: true, text: 'Mức độ rủi ro (Càng thấp càng an toàn)', font: { size: 11 } },
+                min: 10,
+                max: 90,
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+      },
+
+      updateWeight(metric, value) {
+        this.decisionWeights[metric] = Number(value);
+        this.navigate('decision');
+      },
+
+      resetDefaultWeights() {
+        this.decisionWeights = { ...DB.settings.weights };
+        this.navigate('decision');
+        this.showToast('Đã khôi phục bộ trọng số tiêu chuẩn', '🔄');
+      },
+
+      // ==============================================================
+      // 8. PAGE: TRA CỨU THƯƠNG MẠI (TRADE & TARIFF)
+      // ==============================================================
+      renderTradePage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Tra Cứu Thuế Suất & Quy Tắc Xuất Xứ Dệt May</h1>
+                <p class="text-xs text-slate-500 mt-1">Hỗ trợ đối soát mã HS, thuế nhập khẩu ưu đãi theo hiệp định thương mại tự do (FTA) và biểu mẫu C/O</p>
+              </div>
+              <div class="text-xs bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1.5 rounded-lg flex items-center">
+                <span>⚠️ Lưu ý: Dữ liệu dùng cho mục đích tham vấn, cần đối chiếu văn bản pháp quy trước khi thông quan</span>
+              </div>
+            </div>
+
+            <!-- Search Filter Bar -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Mã HS Code hoặc Tên hàng:</label>
+                <input type="text" placeholder="Ví dụ: 5402, Sợi DTY, Bông..." class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50 focus:bg-white" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Thị trường xuất xứ:</label>
+                <select class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50">
+                  <option>Tất cả thị trường (Trung Quốc, Ấn Độ, Brazil...)</option>
+                  <option>Trung Quốc (ACFTA / RCEP)</option>
+                  <option>Ấn Độ (AIFTA)</option>
+                  <option>Châu Âu (EVFTA)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Loại biểu thuế:</label>
+                <select class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50">
+                  <option>Thuế suất ưu đãi đặc biệt (FTA)</option>
+                  <option>Thuế suất thông thường (MFN)</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button class="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
+                  Tìm kiếm thông tin
+                </button>
+              </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div class="p-4 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-bold text-slate-800 text-sm">Biểu Thuế & Quy Tắc Xuất Xứ Ngành Dệt May Chuẩn Hóa</h2>
+              </div>
+              <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="bg-slate-100 text-slate-600 border-b border-slate-200 text-[11px]">
+                      <th class="py-3 px-4">Mã HS</th>
+                      <th class="py-3 px-4">Mô tả mặt hàng</th>
+                      <th class="py-3 px-4">Thuế FTA</th>
+                      <th class="py-3 px-4">Thuế MFN</th>
+                      <th class="py-3 px-4">Yêu cầu xuất xứ C/O</th>
+                      <th class="py-3 px-4">Hiệp định áp dụng</th>
+                      <th class="py-3 px-4 text-right">Hiệu lực</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-700">
+                    ${DB.tradeRecords.map(t => `
+                      <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 font-mono font-bold text-blue-600">${t.hsCode}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-900">${t.product}</td>
+                        <td class="py-3 px-4 font-mono font-bold text-emerald-700">${t.taxRate}</td>
+                        <td class="py-3 px-4 font-mono text-slate-500">${t.normalRate}</td>
+                        <td class="py-3 px-4 text-slate-600">${t.originReq}</td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-semibold">${t.fta}</span></td>
+                        <td class="py-3 px-4 text-right font-mono text-slate-400">${t.updateDate}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      // ==============================================================
+      // 9. PAGE: TRỢ LÝ PHÂN TÍCH (ARROW INTELLIGENCE)
+      // ==============================================================
+      renderAssistantPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Trợ Lý Phân Tích Logistics Arrow</h1>
+                <p class="text-xs text-slate-500 mt-1">Phân tích định lượng cấu trúc dựa trên dữ liệu hệ thống, phân biệt rõ dữ kiện thực tế và kết quả tính toán</p>
+              </div>
+              <div class="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1 rounded-lg">
+                Động cơ phân tích: Phân loại đa tầng (Dữ kiện • Tính toán • Giả định • Đánh đổi)
+              </div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span class="text-xs font-bold text-slate-700 block">Câu hỏi phân tích tình huống phổ biến:</span>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <button onclick="app.askAssistant('cước_20%')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
+                  "Giá cước tăng 20% ảnh hưởng thế nào đến doanh nghiệp?"
+                </button>
+                <button onclick="app.askAssistant('thieu_nguyen_lieu')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
+                  "Lô hàng nào đang có nguy cơ thiếu nguyên liệu sản xuất?"
+                </button>
+                <button onclick="app.askAssistant('cham_7_ngay')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
+                  "Nếu tuyến Trung Quốc trễ thêm 7 ngày thì phương án nào tối ưu?"
+                </button>
+                <button onclick="app.askAssistant('so_sanh_3_phuong_an')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
+                  "So sánh 3 phương án ứng phó cho lô sợi SH001"
+                </button>
+              </div>
+            </div>
+
+            <!-- Response Container -->
+            <div id="assistant-response-area" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5 text-xs">
+              ${this.generateAssistantAnalysis('cước_20%')}
+            </div>
+          </div>
+        `;
+      },
+
+      askAssistant(type) {
+        const area = document.getElementById('assistant-response-area');
+        area.innerHTML = `
+          <div class="p-8 text-center text-slate-400 space-y-2">
+            <div class="text-2xl animate-spin inline-block">🔄</div>
+            <p>Hệ thống đang truy xuất bảng số liệu và chạy thuật toán so sánh...</p>
+          </div>
+        `;
+        setTimeout(() => {
+          area.innerHTML = this.generateAssistantAnalysis(type);
+        }, 400);
+      },
+
+      generateAssistantAnalysis(type) {
+        if (type === 'cước_20%') {
+          return `
+            <div class="space-y-4 leading-relaxed">
+              <div class="border-b pb-3 flex items-center justify-between">
+                <span class="font-bold text-sm text-slate-800">Phân tích: Tác động khi cước vận tải biển tăng 20%</span>
+                <span class="text-[10px] bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded font-bold">KẾT QUẢ ĐÃ ĐỐI SOÁT VỚI DỮ LIỆU THỰC TẾ</span>
+              </div>
+
+              <!-- Dữ kiện hệ thống có -->
+              <div class="p-3 bg-slate-50 border-l-4 border-l-blue-600 rounded">
+                <span class="font-bold text-blue-900 block mb-1 uppercase text-[10px] tracking-wider">1. Dữ Kiện Thực Tế Từ Hệ Thống</span>
+                <p class="text-slate-700">• Cước cơ sở tuyến Ninh Ba - Hải Phòng: <b>80 USD/tấn</b> (Chỉ số SCFI).<br/>
+                • Mức tăng ghi nhận: <b>+20%</b> → Cước mới: <b>96 USD/tấn</b> (+16 USD/tấn).<br/>
+                • Lô hàng trực tiếp chịu ảnh hưởng: <b>SH001</b> gồm 100 tấn Sợi Polyester phục vụ đơn hàng Uniqlo (DH-2026-88). Tỷ giá hạch toán: 25.000 VND/USD.</p>
+              </div>
+
+              <!-- Kết quả tính toán độc lập -->
+              <div class="p-3 bg-purple-50 border-l-4 border-l-purple-600 rounded">
+                <span class="font-bold text-purple-900 block mb-1 uppercase text-[10px] tracking-wider">2. Kết Quả Tính Toán Định Lượng</span>
+                <p class="text-slate-700">• Chi phí cước phát sinh thêm cho lô 100 tấn: <b>100 × 16 USD × 25.000 = 40.000.000 VNĐ</b>.<br/>
+                • Chi phí logistics tăng trên mỗi tấn nguyên liệu: <b>400.000 VNĐ/tấn</b>.<br/>
+                • Tác động ước tính lên giá vốn lô thành phẩm áo khoác: <b>+0.8%</b>.</p>
+              </div>
+
+              <!-- Kịch bản & Rủi ro dây chuyền -->
+              <div class="p-3 bg-amber-50 border-l-4 border-l-amber-600 rounded">
+                <span class="font-bold text-amber-900 block mb-1 uppercase text-[10px] tracking-wider">3. Rủi Ro Liên Đới Sản Xuất & Tồn Kho</span>
+                <p class="text-slate-700">• Tồn kho Sợi Polyester hiện tại: 96 tấn (đủ cho 12 ngày vận hành xưởng với mức tiêu thụ 8 tấn/ngày).<br/>
+                • Nếu chỉ tăng cước mà không chậm chuyến (hàng về đúng ngày 15): Doanh nghiệp hấp thụ được tiến độ.<br/>
+                • Nếu hành trình kéo dài thêm 7 ngày do nghẽn cảng (22 ngày): Nhà máy sẽ <b>thiếu hụt 4 tấn nguyên liệu</b> trước ngày 01/10/2026.</p>
+              </div>
+
+              <!-- Phương án xem xét & Đánh đổi -->
+              <div class="p-3 bg-emerald-50 border-l-4 border-l-emerald-600 rounded">
+                <span class="font-bold text-emerald-900 block mb-1 uppercase text-[10px] tracking-wider">4. Đánh Đổi Giữa Các Phương Án (Trade-offs)</span>
+                <p class="text-slate-700">• <b>Giữ tuyến biển (Phương án A):</b> Chi phí cước thấp nhất nhưng nguy cơ dừng dây chuyền may và vi phạm hợp đồng Uniqlo rất cao.<br/>
+                • <b>Chuyển đường bộ khẩn cấp (Phương án B):</b> Chi phí tăng thêm 225 triệu VNĐ (cước 105 USD/tấn) nhưng thời gian chỉ mất 6 ngày, bảo toàn 100% tiến độ đơn hàng trị giá 28.5 tỷ VNĐ.</p>
+              </div>
+
+              <div class="text-[11px] text-slate-400 italic">
+                Nguồn dữ liệu: Bảng kê nhập khẩu Q3, Chỉ số SCFI ngày 21/09/2026 và Kế hoạch sản xuất phân xưởng may 1.
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="space-y-4 leading-relaxed">
+              <div class="border-b pb-3 flex items-center justify-between">
+                <span class="font-bold text-sm text-slate-800">Tổng hợp phân tích phương án ứng phó cho lô sợi SH001</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-mono px-2 py-0.5 rounded font-bold">KHẢ THI TIẾN ĐỘ: PHƯƠNG ÁN B</span>
+              </div>
+              <p class="text-slate-700">
+                Qua việc chạy bộ lọc điều kiện (Feasibility Gate), <b>Phương án A</b> (chờ tàu biển 22 ngày) bị từ chối do vượt hạn định an toàn tồn kho (12 ngày). <b>Phương án B</b> (đường bộ 6 ngày) đảm bảo cứu vãn tiến độ xưởng dù chi phí phụ thu thêm 2.500 USD (khoảng 62.5 triệu VNĐ). Ban quản trị có thể cân nhắc chuyển 40% khối lượng đi đường bộ và 60% đi đường biển để tối ưu chi phí tổng thể.
+              </p>
+            </div>
+          `;
+        }
+      },
+
+      // ==============================================================
+      // 10. PAGE: BÁO CÁO (REPORTS)
+      // ==============================================================
+      renderReportsPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Báo Cáo Tình Hình Logistics & Đánh Giá Tác Động</h1>
+                <p class="text-xs text-slate-500 mt-1">Xuất bản tài liệu phân tích phục vụ hội đồng quản trị và cuộc họp giao ban sản xuất</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <button onclick="app.exportReport('pdf')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow flex items-center space-x-2">
+                  <span>📥</span> <span>Tải báo cáo PDF hoàn chỉnh</span>
+                </button>
+                <button onclick="app.exportReport('csv')" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-semibold text-xs flex items-center space-x-1">
+                  <span>📊</span> <span>Xuất dữ liệu Excel/CSV</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Report Document Preview -->
+            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm max-w-4xl mx-auto space-y-6 text-xs leading-relaxed text-slate-800">
+              <!-- Report Header -->
+              <div class="border-b-2 border-slate-900 pb-4 flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">BÁO CÁO QUẢN TRỊ NỘI BỘ</span>
+                  <h2 class="text-lg font-bold text-slate-900 mt-1">ĐÁNH GIÁ BIẾN ĐỘNG CƯỚC VẬN TẢI & PHƯƠNG ÁN ỨNG PHÓ VẬT TƯ</h2>
+                  <div class="text-slate-500 text-[11px] mt-0.5">Thời điểm lập: 21/09/2026 • Đơn vị lập: Phòng Kế Hoạch & Chuỗi Cung Ứng</div>
+                </div>
+                <div class="text-right">
+                  <span class="px-2 py-1 bg-slate-900 text-white font-mono text-[10px] font-bold rounded">MÃ: RP-2026-Q3</span>
+                </div>
+              </div>
+
+              <!-- Executive Summary -->
+              <div class="space-y-2">
+                <h3 class="font-bold text-slate-900 text-sm border-b pb-1">I. TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)</h3>
+                <p>Trong tuần qua, cước vận tải container tuyến Trung Quốc - Hải Phòng tăng đột biến +20%, đồng thời thời gian chờ cầu bến kéo dài do bão khiến thời gian hành trình tăng thêm 7 ngày. Lô hàng trọng điểm SH001 (100 tấn Sợi Polyester) phục vụ đơn hàng Uniqlo đang đối mặt với nguy cơ trễ hẹn 10 ngày so với lịch khởi công xưởng. Tồn kho xưởng (96 tấn) chỉ đủ đáp ứng 12 ngày tiêu thụ, dẫn đến thiếu hụt 4 tấn nguyên liệu.</p>
+              </div>
+
+              <!-- Cost & Risk Analysis -->
+              <div class="space-y-2">
+                <h3 class="font-bold text-slate-900 text-sm border-b pb-1">II. ĐỊNH LƯỢNG TÁC ĐỘNG TÀI CHÍNH & VẬN HÀNH</h3>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li><b>Tác động chi phí:</b> Làm tăng 40.000.000 VNĐ chi phí logistics cho lô hàng (+400.000 đ/tấn).</li>
+                  <li><b>Tác động sản xuất:</b> Đơn hàng xuất khẩu áo khoác DH-2026-88 (Doanh thu 28.5 tỷ VNĐ) có nguy cơ vi phạm thời hạn xuất xưởng ngày 15/11/2026.</li>
+                  <li><b>Mức độ rủi ro:</b> Xếp loại CAO do vượt ngưỡng an toàn tồn kho.</li>
+                </ul>
+              </div>
+
+              <!-- Options Comparison -->
+              <div class="space-y-2">
+                <h3 class="font-bold text-slate-900 text-sm border-b pb-1">III. ĐÁNH GIÁ CÁC PHƯƠNG ÁN ỨNG PHÓ</h3>
+                <p>Hệ thống mô phỏng 3 phương án:</p>
+                <div class="p-3 bg-slate-50 rounded border border-slate-200">
+                  <p>• <b>Phương án A (Chờ tàu biển):</b> Cước thấp nhất nhưng không vượt qua cửa kiểm tra khả thi (Feasibility Gate) vì gây dừng chuyền sản xuất 4 tấn.</p>
+                  <p>• <b>Phương án B (Đường bộ khẩn cấp):</b> Cước cao hơn 225 triệu VNĐ nhưng rút ngắn hành trình còn 6 ngày, đảm bảo dây chuyền xưởng vận hành liên tục 100%.</p>
+                  <p>• <b>Phương án C (Nguồn phụ Ấn Độ):</b> Thời gian 16 ngày vẫn trễ hơn 4 ngày so với mức an toàn tồn kho.</p>
+                </div>
+              </div>
+
+              <!-- Recommendation -->
+              <div class="space-y-2">
+                <h3 class="font-bold text-slate-900 text-sm border-b pb-1">IV. KIẾN NGHỊ BAN QUẢN TRỊ</h3>
+                <p>Đề xuất thông qua Phương án B đối với lô sợi SH001 để bảo vệ đơn hàng xuất khẩu chiến lược của khách hàng Uniqlo, đồng thời đàm phán chia sẻ phụ phí mùa cao điểm với đối tác cung ứng.</p>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      exportReport(format) {
+        if (format === 'pdf') {
+          this.showToast('Đang kết xuất báo cáo PDF chuẩn hóa...', '⏳');
+          setTimeout(() => {
+            this.showToast('Đã tải xuống thành công: Bao_cao_logistics_Arrow_2026.pdf', '📄');
+          }, 1000);
+        } else {
+          this.showToast('Đã xuất thành công bảng dữ liệu chi phí: Logistics_Arrow_Q3.csv', '📊');
+        }
+      },
+
+      // ==============================================================
+      // 11. PAGE: CÀI ĐẶT HỆ THỐNG
+      // ==============================================================
+      renderSettingsPage() {
+        return `
+          <div class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <div>
+                <h1 class="text-xl font-bold text-slate-900">Cài Đặt Cấu Hình Hệ Thống</h1>
+                <p class="text-xs text-slate-500 mt-1">Quản lý tham số tính toán, ngưỡng chịu tải rủi ro và giao thức kết nối dữ liệu</p>
+              </div>
+              <button onclick="app.saveSettings()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs shadow">
+                Lưu cấu hình
+              </button>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5 text-xs max-w-2xl">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Tỷ giá USD / VND hạch toán nội bộ:</label>
+                <input type="number" id="setting-usd" value="${DB.settings.usdExchangeRate}" class="w-full border border-slate-300 rounded-lg p-2 font-mono font-bold" />
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Khẩu vị chấp nhận rủi ro doanh nghiệp (Risk Tolerance):</label>
+                <select id="setting-risk" class="w-full border border-slate-300 rounded-lg p-2 font-medium">
+                  <option ${DB.settings.riskTolerance === 'Thấp' ? 'selected' : ''}>Thấp (Ưu tiên an toàn tuyệt đối)</option>
+                  <option ${DB.settings.riskTolerance === 'Trung bình' ? 'selected' : ''}>Trung bình (Cân bằng chi phí và thời gian)</option>
+                  <option ${DB.settings.riskTolerance === 'Cao' ? 'selected' : ''}>Cao (Ưu tiên cắt giảm chi phí logistics)</option>
+                </select>
+                <span class="text-[10px] text-slate-400 mt-1 block">Khi một phương án vượt quá ngưỡng rủi ro, hệ thống sẽ tự động hiển thị nhãn cảnh báo</span>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Ngưỡng tồn kho an toàn tối thiểu (ngày):</label>
+                <input type="number" id="setting-safety" value="${DB.settings.safetyStockThresholdDays}" class="w-full border border-slate-300 rounded-lg p-2 font-mono font-bold" />
+              </div>
+
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-slate-800 block">Chế độ phân tách bảo mật dữ liệu</span>
+                  <span class="text-slate-400 text-[11px]">Không gửi số liệu đơn hàng và doanh thu nội bộ ra mạng công cộng</span>
+                </div>
+                <span class="text-emerald-600 font-bold">Đang bật</span>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      saveSettings() {
+        const usd = document.getElementById('setting-usd').value;
+        const safety = document.getElementById('setting-safety').value;
+        if (usd) DB.settings.usdExchangeRate = Number(usd);
+        if (safety) DB.settings.safetyStockThresholdDays = Number(safety);
+        this.showToast('Đã lưu thành công cấu hình hệ thống!', '✅');
+      },
+
+      // ==============================================================
+      // HERO WORKFLOW: CHẠY LUỒNG MINH HỌA HOÀN CHỈNH (RUN FULL DEMO)
+      // ==============================================================
+      runFullDemoFlow() {
+        this.showToast('Bắt đầu luồng trình diễn minh họa 8 bước...', '⚡');
+
+        // Bước 1: Về Dashboard
+        this.navigate('dashboard');
+
+        // Bước 2: Hiển thị biến động sau 1.5s
+        setTimeout(() => {
+          this.showToast('Bước 1: Phát hiện cú sốc cước vận tải biển +20% trên tuyến Trung Quốc - HP', '🚨');
+        }, 1200);
+
+        // Bước 3: Sang Phân tích tác động
+        setTimeout(() => {
+          this.showToast('Bước 2: Hệ thống tính toán chi phí tăng 40 triệu VNĐ đối với lô sợi SH001', '🔍');
+          this.navigate('impact', { shipmentId: 'SH001', changePct: 20 });
+        }, 2800);
+
+        // Bước 4: Sang Mô phỏng kịch bản trễ 7 ngày
+        setTimeout(() => {
+          this.showToast('Bước 3: Mô phỏng hành trình trễ 7 ngày → Phát hiện nguy cơ thiếu 4 tấn nguyên liệu', '🎯');
+          this.navigate('scenario');
+        }, 4800);
+
+        // Bước 5: Sang So sánh phương án
+        setTimeout(() => {
+          this.showToast('Bước 4: Mở phòng thí nghiệm quyết định so sánh 3 phương án ứng phó', '⚖️');
+          this.navigate('decision');
+        }, 6800);
+
+        // Bước 6: Mở Trợ lý phân tích
+        setTimeout(() => {
+          this.showToast('Bước 5: Trợ lý tổng hợp kết luận định lượng và phân tích đánh đổi', '🤖');
+          this.navigate('assistant');
+        }, 8800);
+      }
+    };
+
+    // Khởi tạo ứng dụng ngay khi DOM sẵn sàng
+    window.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>
