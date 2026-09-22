@@ -2103,120 +2103,63 @@
         `;
       },
 
-      // ==============================================================
-      // 9. PAGE: TRỢ LÝ PHÂN TÍCH (ARROW INTELLIGENCE)
+     // ==============================================================
+      // 9. PAGE: TRỢ LÝ PHÂN TÍCH (ARROW INTELLIGENCE - CHAT TRỰC TIẾP)
       // ==============================================================
       renderAssistantPage() {
+        const savedKey = localStorage.getItem('user_gemini_key') || '';
+        const maskedKey = savedKey ? (savedKey.slice(0, 6) + '...' + savedKey.slice(-4)) : '';
+
         return `
-          <div class="space-y-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="space-y-4 flex flex-col h-[calc(100vh-105px)]">
+            <!-- Header bar & Cấu hình API Key -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-shrink-0">
               <div>
-                <h1 class="text-xl font-bold text-slate-900">Trợ Lý Phân Tích Logistics Arrow</h1>
-                <p class="text-xs text-slate-500 mt-1">Phân tích định lượng cấu trúc dựa trên dữ liệu hệ thống, phân biệt rõ dữ kiện thực tế và kết quả tính toán</p>
+                <h1 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <span>🤖</span> Trợ Lý Phân Tích Logistics Arrow
+                </h1>
+                <p class="text-xs text-slate-500 mt-0.5">Phân tích định lượng dựa trên dữ liệu hệ thống, hỗ trợ ra quyết định chuỗi cung ứng</p>
               </div>
-              <div class="text-xs text-slate-500 font-mono bg-slate-100 px-3 py-1 rounded-lg">
-                Động cơ phân tích: Phân loại đa tầng (Dữ kiện • Tính toán • Giả định • Đánh đổi)
+
+              <div class="flex items-center gap-2">
+                <input type="password" id="client-api-key" placeholder="${savedKey ? 'Key: ' + maskedKey : 'Dán Gemini API Key...'}" class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono" />
+                <button onclick="app.saveUserApiKey()" class="px-3 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 transition">Lưu Key</button>
               </div>
             </div>
 
-            <!-- Quick Suggestions -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
-              <span class="text-xs font-bold text-slate-700 block">Câu hỏi phân tích tình huống phổ biến:</span>
-              <div class="flex flex-wrap gap-2 text-xs">
-                <button onclick="app.askAssistant('cước_20%')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
-                  "Giá cước tăng 20% ảnh hưởng thế nào đến doanh nghiệp?"
-                </button>
-                <button onclick="app.askAssistant('thieu_nguyen_lieu')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
-                  "Lô hàng nào đang có nguy cơ thiếu nguyên liệu sản xuất?"
-                </button>
-                <button onclick="app.askAssistant('cham_7_ngay')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
-                  "Nếu tuyến Trung Quốc trễ thêm 7 ngày thì phương án nào tối ưu?"
-                </button>
-                <button onclick="app.askAssistant('so_sanh_3_phuong_an')" class="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 border border-slate-200 transition font-medium">
-                  "So sánh 3 phương án ứng phó cho lô sợi SH001"
-                </button>
+            <!-- Gợi ý câu hỏi phân tích phổ biến -->
+            <div class="flex flex-wrap gap-2 flex-shrink-0">
+              <button onclick="app.fillChatPrompt('Giá cước tăng 20% ảnh hưởng thế nào đến doanh nghiệp?')" class="px-3 py-1.5 bg-white hover:bg-blue-50 hover:text-blue-700 border border-slate-200 rounded-lg text-xs text-slate-700 transition font-medium shadow-sm">
+                💬 Giá cước tăng 20% ảnh hưởng thế nào?
+              </button>
+              <button onclick="app.fillChatPrompt('Lô hàng nào đang có nguy cơ thiếu nguyên liệu sản xuất?')" class="px-3 py-1.5 bg-white hover:bg-blue-50 hover:text-blue-700 border border-slate-200 rounded-lg text-xs text-slate-700 transition font-medium shadow-sm">
+                💬 Lô hàng nào có nguy cơ thiếu nguyên liệu?
+              </button>
+              <button onclick="app.fillChatPrompt('Nếu tuyến Trung Quốc trễ thêm 7 ngày thì phương án nào tối ưu?')" class="px-3 py-1.5 bg-white hover:bg-blue-50 hover:text-blue-700 border border-slate-200 rounded-lg text-xs text-slate-700 transition font-medium shadow-sm">
+                💬 Xử lý chậm tuyến Trung Quốc 7 ngày
+              </button>
+              <button onclick="app.fillChatPrompt('So sánh 3 phương án ứng phó cho lô sợi SH001')" class="px-3 py-1.5 bg-white hover:bg-blue-50 hover:text-blue-700 border border-slate-200 rounded-lg text-xs text-slate-700 transition font-medium shadow-sm">
+                💬 So sánh 3 phương án cho lô SH001
+              </button>
+            </div>
+
+            <!-- Khung hội thoại Chat cuộn tự do -->
+            <div id="chat-messages-container" class="flex-1 bg-white border border-slate-200 rounded-xl p-4 overflow-y-auto space-y-3 custom-scrollbar text-xs">
+              <div class="p-3 bg-blue-50/60 border border-blue-200 rounded-xl max-w-2xl text-slate-700">
+                <b class="text-blue-900 block mb-1">🤖 Trợ Lý Arrow Intelligence:</b>
+                Xin chào! Tôi đã được nạp dữ liệu về tồn kho, đơn hàng xuất khẩu và cước vận tải biển hiện tại của công ty. Hãy dán API key của bạn vào góc trên bên phải để bắt đầu hỏi đáp và phân tích tình huống thực tế!
               </div>
             </div>
 
-            <!-- Response Container -->
-            <div id="assistant-response-area" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5 text-xs">
-              ${this.generateAssistantAnalysis('cước_20%')}
+            <!-- Thanh nhập câu hỏi -->
+            <div class="flex gap-2 flex-shrink-0">
+              <input type="text" id="chat-user-input" onkeydown="if(event.key === 'Enter') app.sendChatMessage()" placeholder="Nhập câu hỏi phân tích hoặc tra cứu (Nhấn Enter để gửi)..." class="flex-1 border border-slate-300 rounded-xl px-4 py-2.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" />
+              <button onclick="app.sendChatMessage()" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 flex items-center gap-1.5 shadow-sm transition">
+                <span>Gửi</span> <span>🚀</span>
+              </button>
             </div>
           </div>
         `;
-      },
-
-      askAssistant(type) {
-        const area = document.getElementById('assistant-response-area');
-        area.innerHTML = `
-          <div class="p-8 text-center text-slate-400 space-y-2">
-            <div class="text-2xl animate-spin inline-block">🔄</div>
-            <p>Hệ thống đang truy xuất bảng số liệu và chạy thuật toán so sánh...</p>
-          </div>
-        `;
-        setTimeout(() => {
-          area.innerHTML = this.generateAssistantAnalysis(type);
-        }, 400);
-      },
-
-      generateAssistantAnalysis(type) {
-        if (type === 'cước_20%') {
-          return `
-            <div class="space-y-4 leading-relaxed">
-              <div class="border-b pb-3 flex items-center justify-between">
-                <span class="font-bold text-sm text-slate-800">Phân tích: Tác động khi cước vận tải biển tăng 20%</span>
-                <span class="text-[10px] bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded font-bold">KẾT QUẢ ĐÃ ĐỐI SOÁT VỚI DỮ LIỆU THỰC TẾ</span>
-              </div>
-
-              <!-- Dữ kiện hệ thống có -->
-              <div class="p-3 bg-slate-50 border-l-4 border-l-blue-600 rounded">
-                <span class="font-bold text-blue-900 block mb-1 uppercase text-[10px] tracking-wider">1. Dữ Kiện Thực Tế Từ Hệ Thống</span>
-                <p class="text-slate-700">• Cước cơ sở tuyến Ninh Ba - Hải Phòng: <b>80 USD/tấn</b> (Chỉ số SCFI).<br/>
-                • Mức tăng ghi nhận: <b>+20%</b> → Cước mới: <b>96 USD/tấn</b> (+16 USD/tấn).<br/>
-                • Lô hàng trực tiếp chịu ảnh hưởng: <b>SH001</b> gồm 100 tấn Sợi Polyester phục vụ đơn hàng Uniqlo (DH-2026-88). Tỷ giá hạch toán: 25.000 VND/USD.</p>
-              </div>
-
-              <!-- Kết quả tính toán độc lập -->
-              <div class="p-3 bg-purple-50 border-l-4 border-l-purple-600 rounded">
-                <span class="font-bold text-purple-900 block mb-1 uppercase text-[10px] tracking-wider">2. Kết Quả Tính Toán Định Lượng</span>
-                <p class="text-slate-700">• Chi phí cước phát sinh thêm cho lô 100 tấn: <b>100 × 16 USD × 25.000 = 40.000.000 VNĐ</b>.<br/>
-                • Chi phí logistics tăng trên mỗi tấn nguyên liệu: <b>400.000 VNĐ/tấn</b>.<br/>
-                • Tác động ước tính lên giá vốn lô thành phẩm áo khoác: <b>+0.8%</b>.</p>
-              </div>
-
-              <!-- Kịch bản & Rủi ro dây chuyền -->
-              <div class="p-3 bg-amber-50 border-l-4 border-l-amber-600 rounded">
-                <span class="font-bold text-amber-900 block mb-1 uppercase text-[10px] tracking-wider">3. Rủi Ro Liên Đới Sản Xuất & Tồn Kho</span>
-                <p class="text-slate-700">• Tồn kho Sợi Polyester hiện tại: 96 tấn (đủ cho 12 ngày vận hành xưởng với mức tiêu thụ 8 tấn/ngày).<br/>
-                • Nếu chỉ tăng cước mà không chậm chuyến (hàng về đúng ngày 15): Doanh nghiệp hấp thụ được tiến độ.<br/>
-                • Nếu hành trình kéo dài thêm 7 ngày do nghẽn cảng (22 ngày): Nhà máy sẽ <b>thiếu hụt 4 tấn nguyên liệu</b> trước ngày 01/10/2026.</p>
-              </div>
-
-              <!-- Phương án xem xét & Đánh đổi -->
-              <div class="p-3 bg-emerald-50 border-l-4 border-l-emerald-600 rounded">
-                <span class="font-bold text-emerald-900 block mb-1 uppercase text-[10px] tracking-wider">4. Đánh Đổi Giữa Các Phương Án (Trade-offs)</span>
-                <p class="text-slate-700">• <b>Giữ tuyến biển (Phương án A):</b> Chi phí cước thấp nhất nhưng nguy cơ dừng dây chuyền may và vi phạm hợp đồng Uniqlo rất cao.<br/>
-                • <b>Chuyển đường bộ khẩn cấp (Phương án B):</b> Chi phí tăng thêm 225 triệu VNĐ (cước 105 USD/tấn) nhưng thời gian chỉ mất 6 ngày, bảo toàn 100% tiến độ đơn hàng trị giá 28.5 tỷ VNĐ.</p>
-              </div>
-
-              <div class="text-[11px] text-slate-400 italic">
-                Nguồn dữ liệu: Bảng kê nhập khẩu Q3, Chỉ số SCFI ngày 21/09/2026 và Kế hoạch sản xuất phân xưởng may 1.
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-4 leading-relaxed">
-              <div class="border-b pb-3 flex items-center justify-between">
-                <span class="font-bold text-sm text-slate-800">Tổng hợp phân tích phương án ứng phó cho lô sợi SH001</span>
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-mono px-2 py-0.5 rounded font-bold">KHẢ THI TIẾN ĐỘ: PHƯƠNG ÁN B</span>
-              </div>
-              <p class="text-slate-700">
-                Qua việc chạy bộ lọc điều kiện (Feasibility Gate), <b>Phương án A</b> (chờ tàu biển 22 ngày) bị từ chối do vượt hạn định an toàn tồn kho (12 ngày). <b>Phương án B</b> (đường bộ 6 ngày) đảm bảo cứu vãn tiến độ xưởng dù chi phí phụ thu thêm 2.500 USD (khoảng 62.5 triệu VNĐ). Ban quản trị có thể cân nhắc chuyển 40% khối lượng đi đường bộ và 60% đi đường biển để tối ưu chi phí tổng thể.
-              </p>
-            </div>
-          `;
-        }
       },
 
       // ==============================================================
