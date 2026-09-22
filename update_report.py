@@ -11,37 +11,21 @@ if not api_key:
 client = genai.Client(api_key=api_key)
 
 prompt = """
-Bạn là Chuyên gia Cấp cao về Phân tích Chuỗi cung ứng Dệt may & Logistics Quốc tế
-[CÁC NHÓM DỮ LIỆU CẦN THU THẬP & PHÂN TÍCH]
-1. Thị trường Nguyên phụ liệu:
-   - Giá bông quốc tế (Cotton #2 Futures, Cotlook A Index), giá xơ polyester, sợi cotton/polyester và vải mộc (thị trường Trung Quốc, Ấn Độ, Việt Nam).
-2. Chi phí Nhân công:
-   - Khảo sát/ước tính chi phí nhân công trung bình các công đoạn kéo sợi, dệt, nhuộm (tập trung tại Việt Nam, Bangladesh, Ấn Độ, Trung Quốc).
-3. Cước vận tải đa phương thức:
-   - Vận tải biển: Chỉ số FBX (Freightos Baltic Index), Drewry WCI, SCFI; giá cước container 20ft/40ft các tuyến Á - Bắc Mỹ, Á - Châu Âu.
-   - Vận tải hàng không (Air Freight) & đường bộ (nội địa/liên vận sang Trung Quốc): Biến động giá cước trung bình.
-4. Nhiên liệu hàng hải:
-   - Giá dầu diesel tàu biển (MGO, VLSFO) tại các trạm trung chuyển lớn (Singapore, Rotterdam).
-5. Thị trường Tiền tệ:
-   - Tỷ giá USD/VND và EUR/VND (tỷ giá trung tâm, tỷ giá niêm yết Vietcombank và thị trường tự do).
-6. Hạ tầng Cảng Cái Mép - Thị Vải:
-   - Biểu phí nâng hạ, bốc xếp (THC), phí lưu bãi (storage), lưu container (demurrage/detention) và thông báo mới từ các cảng thành viên (TCIT, TCTT, Gemalink, CMIT).
-7. Tắc nghẽn Cảng biển & Tuyến hải trình:
-   - Thời gian chờ cầu bến, tình trạng ùn tắc tại Top 10 cảng container bận rộn nhất thế giới (Thượng Hải, Ninh Ba, Singapore, Rotterdam, Los Angeles, Long Beach...) và hải trình qua Biển Đỏ/Kênh Suez, Kênh đào Panama.
-8. Sự kiện Gián đoạn Logistics:
-   - Thiên tai, bão lũ, đình công công nhân cảng/đường sắt, xung đột vũ trang, dịch bệnh ảnh hưởng đến chuỗi vận tải.
-9. Chính sách Thương mại & Quy định XNK (Hoa Kỳ & EU):
-- Thay đổi thuế quan, luật chống cưỡng bức lao động (UFLPA), cơ chế điều chỉnh biên giới carbon (CBAM), quy định chống phá rừng (EUDR), các yêu cầu mới về chứng nhận truy xuất nguồn gốc số (Digital Product Passport - DPP).
-10. Rủi ro Địa chính trị:
-    - Căng thẳng thương mại, biến động địa chính trị ảnh hưởng đến nguồn cung hoặc đường hàng hải quốc tế.
-11. Biến động Biểu thuế Xuất Nhập khẩu:
-    - Cập nhật rà soát thuế chống bán phá giá (AD), thuế chống trợ cấp (CVD), cập nhật mã HS và các mức thuế suất áp dụng mới nhất.
+BẮT BUỘC: Sử dụng công cụ Google Search để tra cứu thông tin và số liệu thị trường thực tế trong 24 giờ qua. 
+TUYỆT ĐỐI KHÔNG lập danh sách lý thuyết hay giải thích cần thu thập gì. HÃY TRẢ LỜI BẰNG SỐ LIỆU VÀ TIN TỨC THỰC TẾ.
 
+Nhiệm vụ: Hãy đóng vai Chuyên gia Chuỗi cung ứng Dệt may & Logistics, tổng hợp BẢN TIN THỊ TRƯỜNG HÔM NAY theo đúng các nhóm nội dung sau (nêu rõ số liệu, giá trị, % tăng/giảm nếu tìm thấy):
+
+1. Thị trường Nguyên phụ liệu: Giá bông quốc tế (Cotton Futures/Cotlook A Index), giá xơ sợi polyester, cotton/polyester và vải mộc (Trung Quốc, Ấn Độ, Việt Nam).
+2. Cước vận tải & Logistics: Biến động chỉ số SCFI, FBX, Drewry WCI tuyến Á - Mỹ, Á - Âu; cước đường bộ/liên vận Việt - Trung.
+3. Nhiên liệu hàng hải: Giá dầu Brent, VLSFO/MGO tại Singapore/Rotterdam.
+4. Thị trường Tiền tệ: Tỷ giá USD/VND, EUR/VND mới nhất.
+5. Cảng biển & Rủi ro chuỗi cung ứng: Tình hình thông quan, tắc nghẽn cảng biển (Hải Phòng, Cái Mép - Thị Vải, Ninh Ba, Thượng Hải); các sự kiện đình công hoặc biến động chính sách thương mại (UFLPA, EUDR, CBAM).
 
 YÊU CẦU ĐỊNH DẠNG:
-- Chỉ trả về mã HTML sạch, nằm trong các thẻ: <h3>, <p>, <ul>, <li>, <strong>.
+- Trả về mã HTML trực tiếp (sử dụng các thẻ: <h4>, <p>, <ul>, <li>, <strong>).
 - Không bọc trong ```html ... ```.
-- Ngôn ngữ: Tiếng Việt, trình bày súc tích.
+- Trình bày ngắn gọn, súc tích, đi thẳng vào số liệu tin tức của ngày hôm nay.
 """
 
 print("Đang gọi Gemini lấy tin tức thị trường...")
