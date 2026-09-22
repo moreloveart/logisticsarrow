@@ -2301,7 +2301,122 @@
         if (safety) DB.settings.safetyStockThresholdDays = Number(safety);
         this.showToast('Đã lưu thành công cấu hình hệ thống!', '✅');
       },
+saveUserApiKey() {
+        const input = document.getElementById('client-api-key');
+        const key = input.value.trim();
+        if (!key) {
+          this.showToast('Vui lòng nhập chuỗi API key hợp lệ', '⚠️');
+          return;
+        }
+        localStorage.setItem('user_gemini_key', key);
+        input.value = '';
+        this.showToast('Đã lưu API Key thành công!', '✅');
+        this.navigate('assistant');
+      },
 
+      fillChatPrompt(text) {
+        const inp = document.getElementById('chat-user-input');
+        if (inp) {
+          inp.value = text;
+          inp.focus();
+        }
+      },
+
+      async sendChatMessage() {
+        const input = document.getElementById('chat-user-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const apiKey = localStorage.getItem('user_gemini_key');
+        if (!apiKey) {
+          this.showToast('Vui lòng dán Gemini API Key ở góc trên để bắt đầu!', '⚠️');
+          document.getElementById('client-api-key')?.focus();
+          return;
+        }
+
+        const container = document.getElementById('chat-messages-container');
+
+        container.innerHTML += `
+          <div class="flex justify-end">
+            <div class="p-3 bg-slate-900 text-white rounded-xl max-w-xl text-xs shadow-sm">
+              ${text}
+            </div>
+          </div>
+        `;
+        input.value = '';
+        container.scrollTop = container.scrollHeight;
+
+        const loadingId = 'loading-' + Date.now();
+        container.innerHTML += `
+          <div id="${loadingId}" class="flex justify-start">
+            <div class="p-3 bg-slate-100 text-slate-500 rounded-xl max-w-xl text-xs flex items-center gap-2">
+              <span class="animate-spin inline-block">🔄</span> Đang tính toán dữ liệu & phân tích...
+            </div>
+          </div>
+        `;
+        container.scrollTop = container.scrollHeight;
+
+        const systemContext = `
+Bạn là Trợ lý phân tích cao cấp của hệ thống Logistics Arrow (chuỗi cung ứng Dệt may).
+Dữ liệu hiện hành của doanh nghiệp:
+- Lô hàng SH001: 100 tấn Sợi Polyester từ Ninh Ba về Hải Phòng, cước gốc 80 USD/tấn, cước mới 96 USD/tấn (+20%), hành trình dự kiến bị chậm 7 ngày (tổng 22 ngày).
+- Tồn kho xưởng: Sợi Polyester còn 96 tấn, tiêu thụ 8 tấn/ngày (đủ dùng 12 ngày). Chậm 22 ngày sẽ gây thiếu hụt 4 tấn nguyên liệu.
+- Đơn hàng bị đe dọa: DH-2026-88 (Uniqlo - 120.000 áo khoác, doanh thu 28.5 tỷ VNĐ).
+- Phương án A: Tiếp tục chờ tàu biển (rẻ nhất nhưng dừng chuyền 4 tấn).
+- Phương án B: Chuyển đường bộ khẩn cấp qua Hữu Nghị (6 ngày, cước 105 USD/tấn, đảm bảo an toàn tiến độ 100%).
+- Phương án C: Mua từ Gujarat Mills Ấn Độ (16 ngày, cước 102 USD/tấn).
+
+Yêu cầu trả lời: Dựa trên số liệu trên, trả lời trực diện câu hỏi của người dùng, phân tích định lượng rõ ràng, ngắn gọn và mạch lạc.
+Câu hỏi của người dùng: "${text}"
+`;
+
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: systemContext }] }]
+            })
+          });
+
+          const data = await res.json();
+          document.getElementById(loadingId)?.remove();
+
+          if (data.error) {
+            container.innerHTML += `
+              <div class="flex justify-start">
+                <div class="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl max-w-xl text-xs">
+                  ❌ Lỗi API (${data.error.code}): ${data.error.message}
+                </div>
+              </div>
+            `;
+          } else {
+            const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có phản hồi từ mô hình.';
+            const formattedReply = reply.replace(/\n/g, '<br/>');
+
+            container.innerHTML += `
+              <div class="flex justify-start">
+                <div class="p-3 bg-blue-50/80 border border-blue-200 rounded-xl max-w-2xl text-slate-800 text-xs leading-relaxed">
+                  <b class="text-blue-900 block mb-1">🤖 Trợ Lý Arrow:</b>
+                  ${formattedReply}
+                </div>
+              </div>
+            `;
+          }
+        } catch (err) {
+          document.getElementById(loadingId)?.remove();
+          container.innerHTML += `
+            <div class="flex justify-start">
+              <div class="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl max-w-xl text-xs">
+                ⚠️ Không thể gửi yêu cầu: ${err.message}
+              </div>
+            </div>
+          `;
+        }
+
+        container.scrollTop = container.scrollHeight;
+      },
       // ==============================================================
       // HERO WORKFLOW: CHẠY LUỒNG MINH HỌA HOÀN CHỈNH (RUN FULL DEMO)
       // ==============================================================
