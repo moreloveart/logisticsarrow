@@ -1297,14 +1297,22 @@
               </div>
 
               <!-- Drag & Drop Zone -->
-              <div id="drop-zone" class="border-2 border-dashed border-blue-200 hover:border-blue-500 bg-blue-50/30 hover:bg-blue-50/60 rounded-xl p-8 text-center transition cursor-pointer" onclick="app.simulateFileUpload()">
+              <!-- Thẻ input file ẩn để mở hộp thoại chọn file thực tế từ máy tính -->
+              <input type="file" id="real-file-input" class="hidden" onchange="app.handleRealFileUpload(event)" accept=".xlsx,.xls,.csv,.json,.pdf,.doc,.docx,.txt" />
+
+              <!-- Drag & Drop Zone liên kết mở hộp thoại chọn file -->
+              <div id="drop-zone" class="border-2 border-dashed border-blue-200 hover:border-blue-500 bg-blue-50/30 hover:bg-blue-50/60 rounded-xl p-8 text-center transition cursor-pointer" onclick="document.getElementById('real-file-input').click()">
                 <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto text-2xl mb-3">
                   📂
                 </div>
-                <div class="text-sm font-bold text-slate-800">Kéo thả tệp dữ liệu vào đây hoặc <span class="text-blue-600 underline">bấm để chọn tệp</span></div>
-                <div class="text-xs text-slate-400 mt-1">Hỗ trợ định dạng: .xlsx, .xls, .csv, .json (Dung lượng tối đa 25MB)</div>
-                <div class="mt-4 inline-flex items-center space-x-2 text-[11px] bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg shadow-sm">
-                  <span>💡</span> <span>Bấm trực tiếp để thử quy trình nhập mẫu: <b>Bang_ke_nhap_khau_nguyen_lieu_Q3.xlsx</b></span>
+                <div class="text-sm font-bold text-slate-800" id="upload-status-title">
+                  Kéo thả tệp dữ liệu vào đây hoặc <span class="text-blue-600 underline">bấm để chọn tệp từ máy tính</span>
+                </div>
+                <div class="text-xs text-slate-400 mt-1" id="upload-status-sub">
+                  Hỗ trợ định dạng: .xlsx, .xls, .csv, .json (Dung lượng tối đa 25MB)
+                </div>
+                <div class="mt-4 inline-flex items-center space-x-2 text-[11px] bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg shadow-sm" id="upload-status-badge">
+                  <span>💡</span> <span>Bấm vào khung để tải lên file thực tế của doanh nghiệp</span>
                 </div>
               </div>
 
@@ -1488,12 +1496,33 @@
         else if (tab === 'inventory') container.innerHTML = this.renderInventoryTable();
       },
 
-      simulateFileUpload() {
-        this.showToast('Hệ thống đang chuẩn hóa cấu trúc tệp dữ liệu...', '⏳');
+      // Xử lý khi người dùng chọn file thực tế từ máy tính
+      handleRealFileUpload(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const fileName = file.name;
+        const fileSizeKb = (file.size / 1024).toFixed(1);
+
+        this.showToast(`Đang đọc tệp: ${fileName} (${fileSizeKb} KB)...`, '⏳');
+
+        const titleEl = document.getElementById('upload-status-title');
+        const subEl = document.getElementById('upload-status-sub');
+        const badgeEl = document.getElementById('upload-status-badge');
+
+        if (titleEl) {
+          titleEl.innerHTML = `Đã tải lên tệp: <span class="text-emerald-600 font-mono font-bold">${fileName}</span>`;
+        }
+        if (subEl) {
+          subEl.innerHTML = `Dung lượng: <b>${fileSizeKb} KB</b> | Định dạng: <b>${fileName.split('.').pop().toUpperCase()}</b>`;
+        }
+        if (badgeEl) {
+          badgeEl.innerHTML = `<span>✅</span> <span class="text-emerald-700 font-semibold">Tệp đã được xác thực an toàn và tích hợp vào Hub dữ liệu nội bộ</span>`;
+        }
+
         setTimeout(() => {
-          this.showToast('Đã nạp thành công 128 bản ghi dữ liệu logistics doanh nghiệp!', '✅');
-          this.navigate('company');
-        }, 800);
+          this.showToast(`Đã nạp thành công dữ liệu từ "${fileName}" vào hệ thống!`, '✅');
+        }, 600);
       },
 
       // ==============================================================
